@@ -6,36 +6,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitUpload = document.getElementById('submit-upload');
     const fileInput = document.getElementById('file-input');
     const galleryContainer = document.getElementById('gallery-container');
-    const uploadStatus = document.getElementById('upload-status'); 
+    const uploadStatus = document.getElementById('upload-status');
     const lightboxModal = document.getElementById('lightbox-modal');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.querySelector('.lightbox-close');
 
-    let photos = []; // Array untuk menyimpan URL foto yang ditampilkan di layar
+    let photos = []; 
 
     /* ====================================================================
        BAGIAN 1: PENGATURAN TEMA
        ==================================================================== */
-    // Array nama class tema yang merujuk ke CSS.
-    // Jika Anda menambahkan tema baru di style.css (misal: .theme-5),
-    // tambahkan nama 'theme-5' ke dalam array ini.
     const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
     
     function applyRandomTheme() {
-        // Hapus semua class tema yang ada di body
         themes.forEach(theme => document.body.classList.remove(theme));
-        
-        // Pilih tema secara acak
         const randomTheme = themes[Math.floor(Math.random() * themes.length)];
         document.body.classList.add(randomTheme);
-        console.log("Tema berhasil di-refresh, sekarang aktif:", randomTheme);
+        console.log("Tema aktif:", randomTheme);
     }
 
     /* ====================================================================
        BAGIAN 2: AUTO RENAME FOTO
        ==================================================================== */
     function generateAutoName(originalName) {
-        // Menggunakan waktu saat ini (timestamp) sebagai nama unik
         const date = new Date();
         const timestamp = date.getTime();
         const extension = originalName.split('.').pop();
@@ -45,19 +38,17 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ====================================================================
        BAGIAN 3: KONEKSI BACKEND API GITHUB (VERCEL)
        ==================================================================== */
-   async function uploadToVercelGitHub(file, autoRenamedFilename) {
+    async function uploadToVercelGitHub(file, autoRenamedFilename) {
         uploadStatus.textContent = `Menghubungkan ke API... Mengunggah ${autoRenamedFilename}`;
         
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.readAsDataURL(file); // Ubah file jadi base64
+            reader.readAsDataURL(file); 
             
             reader.onload = async () => {
-                // Ambil base64-nya saja, hapus bagian "data:image/jpeg;base64,"
                 const base64Data = reader.result.split(',')[1]; 
 
                 try {
-                    // GANTI URL DI BAWAH INI JIKA PERLU (atau biarkan /api/upload agar otomatis menyesuaikan domain)
                     const response = await fetch('/api/upload', {
                         method: 'POST',
                         headers: {
@@ -72,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const result = await response.json();
                     
                     if (result.success) {
-                        resolve(result.imageUrl); // Mengembalikan link foto dari GitHub
+                        resolve(result.imageUrl); 
                     } else {
                         reject(result.error);
                     }
@@ -85,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.onerror = error => reject(error);
         });
     }
+
     /* ====================================================================
        BAGIAN 4: RENDER GALERI
        ==================================================================== */
@@ -94,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        galleryContainer.innerHTML = ''; // Bersihkan kontainer
+        galleryContainer.innerHTML = ''; 
         
         photos.forEach(url => {
             const card = document.createElement('div');
@@ -106,41 +98,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = url;
             
-            // EVENT LISTENER BARU: Munculkan foto besar saat diklik
             card.addEventListener('click', () => {
-                lightboxModal.classList.remove('hidden');
-                lightboxImg.src = url;
+                if (lightboxModal && lightboxImg) {
+                    lightboxModal.classList.remove('hidden');
+                    lightboxImg.src = url;
+                }
             });
             
             card.appendChild(img);
             galleryContainer.appendChild(card);
         });
+    } // <-- INI ADALAH KURUNG PENUTUP YANG HILANG DI KODE ANDA
+
     /* ====================================================================
-       BAGIAN 5: EVENT LISTENERS
+       BAGIAN 5: EVENT LISTENERS TOMBOL
        ==================================================================== */
-    
-    // Ketika tombol Refresh Tema (di navigasi kanan atas) diklik
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
         applyRandomTheme();
-        // Render ulang galeri agar rotasi fotonya juga berubah/teracak ulang
         renderGallery(); 
     });
 
-    // Menampilkan Modal Upload
     uploadBtn.addEventListener('click', (e) => {
         e.preventDefault();
         modal.classList.remove('hidden');
     });
     
-    // Menutup Modal Upload
     closeBtn.addEventListener('click', () => {
         modal.classList.add('hidden');
         uploadStatus.textContent = '';
         fileInput.value = '';
     });
 
-    // Proses Submit Upload
     submitUpload.addEventListener('click', async () => {
         const files = fileInput.files;
         if (files.length === 0) {
@@ -150,24 +139,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         submitUpload.disabled = true;
 
-        // Loop jika mengunggah lebih dari 1 foto sekaligus
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            
-            // 1. Jalankan fitur Auto Rename
             const newFilename = generateAutoName(file.name);
             
-            // 2. Jalankan fungsi Upload ke Backend/API
             try {
                 const uploadedUrl = await uploadToVercelGitHub(file, newFilename);
-                photos.push(uploadedUrl); // Simpan URL gambar ke dalam array
+                photos.push(uploadedUrl); 
                 uploadStatus.textContent = `Berhasil mengunggah ${newFilename}!`;
             } catch (error) {
                 uploadStatus.textContent = `Gagal mengunggah ${newFilename}`;
             }
         }
 
-        // Tutup modal dan refresh galeri setelah sukses upload
         setTimeout(() => {
             modal.classList.add('hidden');
             submitUpload.disabled = false;
@@ -177,22 +161,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 800);
     });
 
+    /* ====================================================================
+       BAGIAN 6: EVENT LISTENER LIGHTBOX (ZOOM FOTO)
+       ==================================================================== */
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', () => {
+            lightboxModal.classList.add('hidden');
+        });
+    }
+
+    if (lightboxModal) {
+        lightboxModal.addEventListener('click', (e) => {
+            if (e.target !== lightboxImg) {
+                lightboxModal.classList.add('hidden');
+            }
+        });
+    }
+
     // Jalankan tema acak pertama kali saat website dibuka
     applyRandomTheme();
 });
-
-
-/* ====================================================================
-       BAGIAN 6: EVENT LISTENER LIGHTBOX (ZOOM FOTO)
-       ==================================================================== */
-    // Tutup saat tombol X diklik
-    lightboxClose.addEventListener('click', () => {
-        lightboxModal.classList.add('hidden');
-    });
-
-    // Tutup saat area gelap di luar foto diklik
-    lightboxModal.addEventListener('click', (e) => {
-        if (e.target !== lightboxImg) {
-            lightboxModal.classList.add('hidden');
-        }
-    });
