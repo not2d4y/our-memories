@@ -42,44 +42,46 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ====================================================================
        BAGIAN 3: KONEKSI BACKEND API GITHUB (VERCEL)
        ==================================================================== */
-    async function uploadToVercelGitHub(file, autoRenamedFilename) {
+   async function uploadToVercelGitHub(file, autoRenamedFilename) {
         uploadStatus.textContent = `Menghubungkan ke API... Mengunggah ${autoRenamedFilename}`;
         
-        /* 
-         * -----------------------------------------------------------
-         * KODE BACKEND API GITHUB & VERCEL (Silakan disesuaikan)
-         * -----------------------------------------------------------
-         * Ganti URL 'https://api-vercel-anda.vercel.app/api/upload' 
-         * dengan endpoint API Vercel milik Anda yang terhubung ke GitHub.
-         * 
-         * const formData = new FormData();
-         * formData.append('image', file, autoRenamedFilename); // Menggunakan nama file baru (auto-rename)
-         * 
-         * try {
-         *     const response = await fetch('https://api-vercel-anda.vercel.app/api/upload', {
-         *         method: 'POST',
-         *         body: formData,
-         *         // Jika butuh headers seperti Authorization, tambahkan di sini:
-         *         // headers: { 'Authorization': 'Bearer YOUR_TOKEN' }
-         *     });
-         *     const result = await response.json();
-         *     return result.imageUrl; // Sesuaikan dengan struktur response JSON dari Vercel API Anda
-         * } catch (error) {
-         *     console.error('Terjadi kesalahan saat upload ke GitHub via Vercel:', error);
-         *     throw error;
-         * }
-         */
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file); // Ubah file jadi base64
+            
+            reader.onload = async () => {
+                // Ambil base64-nya saja, hapus bagian "data:image/jpeg;base64,"
+                const base64Data = reader.result.split(',')[1]; 
 
-        // SIMULASI LOKAL (Hapus bagian di bawah ini jika API di atas sudah aktif):
-        return new Promise(resolve => {
-            setTimeout(() => {
-                // Membuat object URL sementara agar foto bisa langsung tampil di HTML
-                const fakeUrl = URL.createObjectURL(file);
-                resolve(fakeUrl);
-            }, 1000); // Simulasi delay internet 1 detik
+                try {
+                    // GANTI URL DI BAWAH INI JIKA PERLU (atau biarkan /api/upload agar otomatis menyesuaikan domain)
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            filename: autoRenamedFilename,
+                            imageBase64: base64Data
+                        })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        resolve(result.imageUrl); // Mengembalikan link foto dari GitHub
+                    } else {
+                        reject(result.error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    reject(error);
+                }
+            };
+            
+            reader.onerror = error => reject(error);
         });
     }
-
     /* ====================================================================
        BAGIAN 4: RENDER GALERI
        ==================================================================== */
