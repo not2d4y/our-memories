@@ -36,7 +36,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ====================================================================
-       BAGIAN 3: KONEKSI BACKEND API GITHUB (VERCEL)
+       BAGIAN 3: AMBIL FOTO OTOMATIS DARI GITHUB (Agar muncul di semua device)
+       ==================================================================== */
+    async function fetchExistingPhotosFromGitHub() {
+        try {
+            // Mengambil daftar file dari folder "foto-kenangan" di repo GitHub Anda
+            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/foto-kenangan`);
+            const files = await response.json();
+
+            if (Array.isArray(files)) {
+                // Ambil link download_url dari setiap file gambar yang ada di folder GitHub
+                photos = files.map(file => file.download_url);
+                renderGallery(); 
+            }
+        } catch (error) {
+            console.log("Belum ada foto di GitHub atau folder masih kosong.");
+            renderGallery();
+        }
+    }
+
+    /* ====================================================================
+       BAGIAN 4: KONEKSI BACKEND API GITHUB (VERCEL)
        ==================================================================== */
     async function uploadToVercelGitHub(file, autoRenamedFilename) {
         uploadStatus.textContent = `Menghubungkan ke API... Mengunggah ${autoRenamedFilename}`;
@@ -78,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ====================================================================
-       BAGIAN 4: RENDER GALERI
+       BAGIAN 5: RENDER GALERI
        ==================================================================== */
     function renderGallery() {
         if (photos.length === 0) {
@@ -108,10 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
             card.appendChild(img);
             galleryContainer.appendChild(card);
         });
-    } // <-- INI ADALAH KURUNG PENUTUP YANG HILANG DI KODE ANDA
+    }
 
     /* ====================================================================
-       BAGIAN 5: EVENT LISTENERS TOMBOL
+       BAGIAN 6: EVENT LISTENERS TOMBOL
        ==================================================================== */
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -162,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ====================================================================
-       BAGIAN 6: EVENT LISTENER LIGHTBOX (ZOOM FOTO)
+       BAGIAN 7: EVENT LISTENER LIGHTBOX (ZOOM FOTO)
        ==================================================================== */
     if (lightboxClose) {
         lightboxClose.addEventListener('click', () => {
@@ -178,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Jalankan tema acak pertama kali saat website dibuka
+    // Jalankan fungsi awal saat website dibuka
     applyRandomTheme();
+    fetchExistingPhotosFromGitHub(); // Menarik foto langsung dari GitHub secara otomatis
 });
