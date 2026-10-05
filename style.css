@@ -94,6 +94,58 @@ body.theme-4 .photo-card {
 .photo-card:hover { transform: scale(1.15) rotate(0deg) !important; z-index: 50; position: relative; }
 
 /* =========================================
+   LIGHTBOX MODAL (Untuk Zoom Foto)
+   ========================================= */
+#lightbox-modal {
+    position: fixed;
+    z-index: 9999; /* Pastikan selalu paling atas */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#lightbox-modal.hidden {
+    display: none !important;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    object-fit: contain; /* Agar gambar tidak gepeng */
+    animation: zoomIn 0.3s ease;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 45px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+    color: #bbb;
+    text-decoration: none;
+}
+
+/* Animasi membesar saat diklik */
+@keyframes zoomIn {
+    from {transform: scale(0.7); opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
+}
+
+/* =========================================
    MODAL UPLOAD
    ========================================= */
 .hidden { display: none !important; }
