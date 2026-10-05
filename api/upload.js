@@ -10,8 +10,8 @@ export default async function handler(req, res) {
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
     
     // UBAH DUA BARIS INI SESUAI GITHUB ANDA
-    const REPO_OWNER = 'UsernameGitHubAnda'; 
-    const REPO_NAME = 'NamaRepositoryAnda'; 
+    const REPO_OWNER = 'not2d4y'; 
+    const REPO_NAME = 'our-memories'; 
     
     // Ini otomatis akan membuat folder "foto-kenangan" di GitHub Anda
     const PATH = `foto-kenangan/${filename}`; 
