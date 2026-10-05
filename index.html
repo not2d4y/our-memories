@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foto Kenanganku</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-1"> <!-- Tema default sebelum diubah oleh JS -->
+    <!-- Menu Navigasi Pojok Kanan Atas (Opacity 30%) -->
+    <nav class="top-nav">
+        <ul>
+            <li><a href="#" id="upload-btn">Upload Foto</a></li>
+            <li><a href="#" id="refresh-btn">Refresh Tema</a></li>
+        </ul>
+    </nav>
+
+    <!-- Container Utama Galeri -->
+    <main id="gallery-container" class="gallery">
+        <!-- Foto akan di-render di sini secara dinamis oleh JavaScript -->
+        <div class="empty-state">Belum ada foto kenangan. Silakan upload!</div>
+    </main>
+
+    <!-- Modal untuk Upload Foto -->
+    <div id="upload-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Upload Foto Kenangan</h2>
+            <input type="file" id="file-input" accept="image/*" multiple>
+            <button id="submit-upload">Simpan ke Galeri</button>
+            <!-- Status proses auto-rename dan upload backend -->
+            <p id="upload-status"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

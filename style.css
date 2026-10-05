@@ -1,0 +1,106 @@
+/* Reset & Base Styles */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    overflow-x: hidden; 
+    min-height: 100vh; 
+    transition: background 0.5s ease; /* Transisi halus saat ganti tema */
+}
+
+/* =========================================
+   NAVIGATION MENU (Pojok Kanan Atas, Opacity 30%)
+   ========================================= */
+.top-nav {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.3); /* Opacity 30% */
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+.top-nav ul { list-style: none; display: flex; gap: 15px; }
+.top-nav a { color: white; text-decoration: none; font-weight: bold; font-size: 14px; }
+.top-nav a:hover { color: #f0f0f0; text-decoration: underline; }
+
+/* =========================================
+   PENGATURAN TEMA GALERI
+   Untuk menambahkan tema baru:
+   1. Tambahkan class .theme-X di bawah ini.
+   2. Daftarkan nama class tersebut di array 'themes' pada file script.js
+   ========================================= */
+
+/* Tema 1: Dark Scrapbook */
+body.theme-1 { background-color: #1a1a1a; }
+body.theme-1 .photo-card { 
+    border: 10px solid #fff; 
+    box-shadow: 2px 2px 15px rgba(0,0,0,0.8); 
+    transform: rotate(calc(var(--rot) * 1deg)); 
+}
+
+/* Tema 2: Scattered Polaroids */
+body.theme-2 { background-color: #f4f1ea; }
+body.theme-2 .photo-card { 
+    border: 15px solid #fff; 
+    border-bottom-width: 45px; /* Efek Polaroid */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+    transform: rotate(calc(var(--rot) * -1deg)); 
+}
+
+/* Tema 3: Pink Sakura */
+body.theme-3 { 
+    background-color: #ffd1dc; 
+    background-image: radial-gradient(#ffb6c1 10%, transparent 11%); 
+    background-size: 20px 20px; 
+}
+body.theme-3 .photo-card { 
+    border: 5px solid #fff; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 15px rgba(255,105,180,0.4); 
+}
+
+/* Tema 4: Bright Travel / Biru Cerah */
+body.theme-4 { background-color: #a2d2ff; }
+body.theme-4 .photo-card { 
+    border: 8px solid #fff; 
+    border-radius: 5px; 
+    box-shadow: 4px 4px 0 #333; 
+    transform: rotate(calc(var(--rot) * 2deg)); 
+}
+
+/* =========================================
+   GALLERY & CARD LAYOUT
+   ========================================= */
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px 20px;
+    min-height: 100vh;
+    gap: 25px;
+}
+.empty-state { color: #888; font-size: 1.2rem; text-align: center; margin-top: 20vh; background: rgba(255,255,255,0.7); padding: 10px 20px; border-radius: 5px; }
+
+.photo-card {
+    width: 250px;
+    height: auto;
+    transition: transform 0.3s ease, z-index 0s;
+    cursor: pointer;
+    background: white;
+}
+.photo-card img { width: 100%; height: auto; display: block; object-fit: cover; }
+.photo-card:hover { transform: scale(1.15) rotate(0deg) !important; z-index: 50; position: relative; }
+
+/* =========================================
+   MODAL UPLOAD
+   ========================================= */
+.hidden { display: none !important; }
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+.modal-content { background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 400px; position: relative; text-align: center; }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; }
+#file-input { margin: 20px 0; }
+#submit-upload { background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;}
+#submit-upload:hover { background: #555; }
+#upload-status { margin-top: 15px; font-size: 14px; color: #e63946; font-weight: bold; }
