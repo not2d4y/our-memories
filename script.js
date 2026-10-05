@@ -45,12 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const files = await response.json();
 
             if (Array.isArray(files)) {
-                // Ambil link download_url dari setiap file gambar yang ada di folder GitHub
-                photos = files.map(file => file.download_url);
+                // Saring hanya file gambar dan ambil link download_url-nya
+                photos = files
+                    .filter(file => file.type === 'file' && /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name))
+                    .map(file => file.download_url);
+                
                 renderGallery(); 
+            } else {
+                console.log("Folder foto-kenangan masih kosong.");
+                renderGallery();
             }
         } catch (error) {
-            console.log("Belum ada foto di GitHub atau folder masih kosong.");
+            console.error("Gagal mengambil foto dari GitHub:", error);
             renderGallery();
         }
     }
@@ -200,5 +206,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Jalankan fungsi awal saat website dibuka
     applyRandomTheme();
-    fetchExistingPhotosFromGitHub(); // Menarik foto langsung dari GitHub secara otomatis
+    fetchExistingPhotosFromGitHub(); // Menarik foto otomatis dari GitHub
 });
