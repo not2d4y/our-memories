@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitUpload = document.getElementById('submit-upload');
     const fileInput = document.getElementById('file-input');
     const galleryContainer = document.getElementById('gallery-container');
-    const uploadStatus = document.getElementById('upload-status');
+    const uploadStatus = document.getElementById('upload-status'); 
+    const lightboxModal = document.getElementById('lightbox-modal');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.querySelector('.lightbox-close');
 
     let photos = []; // Array untuk menyimpan URL foto yang ditampilkan di layar
 
@@ -97,19 +100,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'photo-card';
             
-            // Memberikan variabel CSS kustom (--rot) dengan rotasi acak antara -20 sampai 20 derajat
-            // Variabel ini digunakan di file CSS untuk membuat efek tumpukan berantakan
             const randomRot = Math.floor(Math.random() * 40) - 20;
             card.style.setProperty('--rot', randomRot);
             
             const img = document.createElement('img');
             img.src = url;
             
+            // EVENT LISTENER BARU: Munculkan foto besar saat diklik
+            card.addEventListener('click', () => {
+                lightboxModal.classList.remove('hidden');
+                lightboxImg.src = url;
+            });
+            
             card.appendChild(img);
             galleryContainer.appendChild(card);
         });
-    }
-
     /* ====================================================================
        BAGIAN 5: EVENT LISTENERS
        ==================================================================== */
@@ -175,3 +180,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Jalankan tema acak pertama kali saat website dibuka
     applyRandomTheme();
 });
+
+
+/* ====================================================================
+       BAGIAN 6: EVENT LISTENER LIGHTBOX (ZOOM FOTO)
+       ==================================================================== */
+    // Tutup saat tombol X diklik
+    lightboxClose.addEventListener('click', () => {
+        lightboxModal.classList.add('hidden');
+    });
+
+    // Tutup saat area gelap di luar foto diklik
+    lightboxModal.addEventListener('click', (e) => {
+        if (e.target !== lightboxImg) {
+            lightboxModal.classList.add('hidden');
+        }
+    });
