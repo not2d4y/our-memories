@@ -46,8 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let startTime;
     let gameActive = false;
 
-    // --- TEMA ACAK (RANDOM THEME) ---
+    // --- PENGATURAN TEMA ---
     const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
+    
     function applyRandomTheme() {
         themes.forEach(theme => document.body.classList.remove(theme));
         const randomTheme = themes[Math.floor(Math.random() * themes.length)];
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuGallery.addEventListener('click', (e) => {
         e.preventDefault();
-        applyRandomTheme(); // Ganti tema acak saat buka galeri
+        applyRandomTheme(); // Galeri tetap menggunakan tema acak
         gallerySection.classList.remove('hidden');
         gameSection.classList.add('hidden');
         sidebar.classList.remove('active');
@@ -73,7 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuGame.addEventListener('click', (e) => {
         e.preventDefault();
-        applyRandomTheme(); // Ganti tema acak saat buka game
+        
+        // KHUSUS MENU GAME: Default ke Tema 3 (Pink Sakura polkadot)
+        themes.forEach(theme => document.body.classList.remove(theme));
+        document.body.classList.add('theme-3'); 
+
         gallerySection.classList.add('hidden');
         gameSection.classList.remove('hidden');
         sidebar.classList.remove('active');
@@ -126,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, 25);
         if(!gamePhotos.includes(targetUrl)) gamePhotos[0] = targetUrl;
 
-        // Array untuk menyimpan titik koordinat foto yang sudah ditaruh
+        // Array untuk menyimpan titik koordinat foto agar tidak menumpuk 90%
         const placedPositions = [];
         const minDistance = 75; 
 
