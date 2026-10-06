@@ -4,24 +4,21 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     overflow-x: hidden; 
     min-height: 100vh; 
-    transition: background 0.5s ease; /* Transisi halus saat ganti tema */
+    transition: background 0.5s ease; 
 }
 
 /* =========================================
-   NAVIGATION MENU (Disembunyikan, diganti Hamburger)
+   NAVIGATION MENU & SIDEBAR
    ========================================= */
 .top-nav { display: none; }
 
-/* =========================================
-   HAMBURGER & SIDEBAR (Geser & Opacity 30%)
-   ========================================= */
 .hamburger-btn {
     position: fixed;
     top: 20px;
     right: 25px;
     font-size: 30px;
     color: white;
-    background: rgba(0, 0, 0, 0.3); /* Opacity 30% */
+    background: rgba(0, 0, 0, 0.3); 
     padding: 5px 15px;
     border-radius: 8px;
     cursor: pointer;
@@ -37,7 +34,7 @@ body {
     right: -300px; 
     width: 250px;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.3); /* Opacity 30% */
+    background: rgba(0, 0, 0, 0.3); 
     backdrop-filter: blur(10px);
     z-index: 1002;
     transition: right 0.4s ease;
@@ -112,7 +109,7 @@ body.theme-4 .photo-card {
 .photo-card:hover { transform: scale(1.15) rotate(0deg) !important; z-index: 50; position: relative; }
 
 /* =========================================
-   LIGHTBOX MODAL (Untuk Zoom Foto)
+   LIGHTBOX MODAL
    ========================================= */
 #lightbox-modal {
     position: fixed;
@@ -164,17 +161,7 @@ body.theme-4 .photo-card {
 #upload-status { margin-top: 15px; font-size: 14px; color: #e63946; font-weight: bold; }
 
 /* =========================================
-   GAME SECTION
-   ========================================= */
-#game-section { padding: 80px 20px 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center;}
-.game-panel { background: rgba(255,255,255,0.9); padding: 30px; border-radius: 15px; text-align: center; }
-.game-panel input { padding: 10px; margin: 15px 0; width: 80%; }
-.game-panel button { padding: 10px 20px; background: #ff69b4; color: white; border: none; font-weight: bold; cursor: pointer; }
-
-#game-arena { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 20px;}
-
-/* =========================================
-   GAME SECTION & HEADER UTAMA
+   GAME SECTION & LOGIN PANEL
    ========================================= */
 #game-section { 
     padding: 70px 15px 20px; 
@@ -205,14 +192,15 @@ body.theme-4 .photo-card {
     gap: 15px;
 }
 
-/* HEADER GAME (Rapi & Terpusat di HP) */
+/* =========================================
+   GAME HEADER & BOX SIMETRIS
+   ========================================= */
 .game-header {
     display: flex;
-    flex-direction: row; 
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch; 
     background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
-    padding: 12px 15px;
+    padding: 12px;
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(255, 105, 180, 0.15);
     width: 100%;
@@ -220,47 +208,64 @@ body.theme-4 .photo-card {
     gap: 10px;
 }
 
-/* Box Target Foto di Kiri/Atas */
-.target-clue {
+.game-box {
     background: white;
-    padding: 8px;
-    border-radius: 12px;
+    padding: 12px;
+    border-radius: 15px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 48%; 
+    text-align: center;
 }
 
 .target-clue p {
     font-weight: bold;
     color: #ff69b4;
-    margin-bottom: 4px;
-    font-size: 12px;
-}
-
-/* Tombol Berdampingan di Atas Foto */
-.game-actions {
-    display: flex;
-    gap: 5px;
     margin-bottom: 6px;
+    font-size: 13px;
 }
 
+.target-clue img {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border: 2px dashed #ffb6c1;
+    border-radius: 10px;
+}
+
+/* Info Pemain, Waktu, & Tombol Leaderboard */
+.game-info .score-text {
+    font-size: 11px;
+    color: #555;
+    font-weight: bold;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+/* Tombol Mulai Cute */
 #start-game-btn {
-    padding: 6px 10px;
+    margin-bottom: 6px;
+    padding: 6px 12px;
     background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%);
     color: #d81b60;
     border: none;
-    border-radius: 10px;
-    font-size: 11px;
+    border-radius: 12px;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 3px 10px rgba(255, 105, 180, 0.3);
+    transition: all 0.2s ease;
+}
+#start-game-btn:hover {
+    transform: translateY(-2px) scale(1.03);
 }
 
-/* Tombol Leaderboard Baru di Box Info */
+/* Tombol Leaderboard */
 #leaderboard-btn {
-    margin-top: 8px;
-    padding: 6px 12px;
+    padding: 6px 10px;
     background: #fff0f5;
     color: #ff69b4;
     border: 1px solid #ffb6c1;
@@ -271,72 +276,13 @@ body.theme-4 .photo-card {
     width: 100%;
     transition: all 0.2s ease;
 }
-
 #leaderboard-btn:hover {
     background: #ffe4e1;
-    transform: scale(1.02);
 }
 
-/* Penyesuaian Game Header agar seimbang */
-.game-header {
-    display: flex;
-    flex-direction: row; 
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
-    padding: 12px 15px;
-    border-radius: 20px;
-    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.15);
-    width: 100%;
-    border: 2px solid #ffb6c1;
-    gap: 10px;
-}
-
-.target-clue, .game-info {
-    background: white;
-    padding: 10px;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 48%; /* Bagi rata lebarnya di HP */
-    text-align: center;
-}
-
-.target-clue p, .game-info p {
-    font-weight: bold;
-    color: #ff69b4;
-    margin-bottom: 4px;
-    font-size: 13px;
-}
-.game-info p { color: #555; }
-
-.target-clue img {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    border: 2px dashed #ffb6c1;
-    border-radius: 8px;
-}
-
-/* Info Pemain & Waktu di Kanan */
-.game-info {
-    background: white;
-    padding: 12px;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    flex-grow: 1;
-    text-align: center;
-}
-
-.game-info p {
-    color: #555;
-    margin: 4px 0;
-    font-size: 14px;
-}
-
-/* AREA GAME SCATTER (Tempat Foto Berserakan yang Proporsional) */
+/* =========================================
+   AREA GAME SCATTER
+   ========================================= */
 #scatter-area { 
     position: relative; 
     width: 100%; 
@@ -358,7 +304,9 @@ body.theme-4 .photo-card {
     cursor: pointer; 
 }
 
-/* Modal Leaderboard Pop-up */
+/* =========================================
+   MODAL LEADERBOARD POP-UP
+   ========================================= */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000; }
 .modal-content { background: white; padding: 25px; border-radius: 15px; width: 90%; max-width: 320px; position: relative; text-align: center; }
 .modal-content h2 { color: #ff69b4; margin-bottom: 15px; font-size: 18px; }
@@ -392,28 +340,6 @@ body.theme-4 .photo-card {
     color: #888;
 }
 
-/* Sembunyikan gambar kosong */
+/* Sembunyikan gambar target kosong */
 #target-photo[src=""] { display: none; }
 #target-photo:not([src=""]) { display: inline-block; }
-
-/* Tombol Start Game yang Cute */
-#start-game-btn {
-    margin-top: 15px;
-    padding: 10px 25px;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-    color: #d81b60;
-    border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
-    transition: all 0.3s ease;
-}
-#start-game-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
-}
-#start-game-btn:active {
-    transform: translateY(2px);
-}
