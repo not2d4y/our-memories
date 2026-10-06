@@ -149,23 +149,29 @@ document.addEventListener('DOMContentLoaded', () => {
         timeDisplay.textContent = "0.00";
     }
 
-    // --- LEADERBOARD GITHUB API ---
+   // --- LEADERBOARD GITHUB API (DENGAN LIVE UPDATE) ---
+    let currentLeaderboard = []; // Variabel untuk menyimpan rekor sementara
+
     async function fetchLeaderboard() {
         leaderboardList.innerHTML = '<li>Memuat...</li>';
         try {
-            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/leaderboard/scores.json`);
+            const antiCache = new Date().getTime();
+            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/leaderboard/scores.json?t=${antiCache}`);
             if (response.ok) {
                 const data = await response.json();
-                const scores = JSON.parse(atob(data.content)); // Decode Base64 dari GitHub
-                renderLeaderboardList(scores);
+                currentLeaderboard = JSON.parse(atob(data.content)); // Simpan data dari GitHub
+                renderLeaderboardList(currentLeaderboard);
             } else {
                 leaderboardList.innerHTML = '<li>Belum ada rekor.</li>';
             }
-        } catch (error) { leaderboardList.innerHTML = '<li>Gagal memuat rekor.</li>'; }
+        } catch (error) { 
+            leaderboardList.innerHTML = '<li>Gagal memuat rekor.</li>'; 
+        }
     }
 
     function renderLeaderboardList(scores) {
         leaderboardList.innerHTML = '';
+        // Urutkan dan ambil top 5
         scores.sort((a, b) => a.time - b.time).slice(0, 5).forEach((s, idx) => {
             const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👏';
             const li = document.createElement('li');
@@ -175,17 +181,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function saveScoreToGitHub(name, time) {
-        leaderboardList.innerHTML = '<li>Menyimpan rekor...</li>';
+        // 1. LIVE UPDATE (Langsung tampil di layar tanpa nunggu loading)
+        currentLeaderboard.push({ name, time });
+        renderLeaderboardList(currentLeaderboard);
+
+        // 2. Simpan ke GitHub diam-diam di background
         try {
             await fetch('/api/score', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, time })
             });
-            fetchLeaderboard();
-        } catch (error) { console.error("Gagal menyimpan skor", error); }
+            // Tidak perlu fetch ulang karena layar sudah ter-update secara lokal
+        } catch (error) { 
+            console.error("Gagal menyimpan skor", error); 
+        }
     }
-
     // --- EVENT LAINNYA ---
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
