@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameArena.classList.remove('hidden');
     });
 
-    startGameBtn.addEventListener('click', () => {
+  startGameBtn.addEventListener('click', () => {
         if (photos.length < 5) return alert("Upload minimal 5 foto dulu di galeri!");
         
         targetUrl = photos[Math.floor(Math.random() * photos.length)];
@@ -107,6 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, 25);
         if(!gamePhotos.includes(targetUrl)) gamePhotos[0] = targetUrl;
 
+        // Array untuk menyimpan titik koordinat foto yang sudah ditaruh
+        const placedPositions = [];
+        // Minimal jarak antar foto (karena foto ukuran 100px, jarak 75px berarti overlap 25%)
+        const minDistance = 75; 
+
         gamePhotos.sort(() => 0.5 - Math.random()).forEach(url => {
             const img = document.createElement('img');
             img.src = url;
@@ -114,8 +119,37 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const maxX = scatterArea.clientWidth - 110;
             const maxY = scatterArea.clientHeight - 110;
-            img.style.left = `${Math.floor(Math.random() * maxX)}px`;
-            img.style.top = `${Math.floor(Math.random() * maxY)}px`;
+            
+            let finalX, finalY;
+            let overlapping = true;
+            let attempts = 0;
+            const maxAttempts = 50; // Batas percobaan agar tidak error jika layar sempit
+
+            // Mencari posisi yang tidak terlalu menumpuk
+            while (overlapping && attempts < maxAttempts) {
+                finalX = Math.floor(Math.random() * maxX);
+                finalY = Math.floor(Math.random() * maxY);
+                overlapping = false;
+
+                // Cek jarak dengan foto-foto yang sudah diletakkan sebelumnya
+                for (let pos of placedPositions) {
+                    const dx = finalX - pos.x;
+                    const dy = finalY - pos.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < minDistance) {
+                        overlapping = true;
+                        break;
+                    }
+                }
+                attempts++;
+            }
+
+            // Simpan posisi aman yang didapat
+            placedPositions.push({ x: finalX, y: finalY });
+
+            img.style.left = `${finalX}px`;
+            img.style.top = `${finalY}px`;
             img.style.transform = `rotate(${Math.floor(Math.random() * 90) - 45}deg)`;
             img.style.zIndex = Math.floor(Math.random() * 100);
 
