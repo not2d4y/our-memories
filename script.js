@@ -251,3 +251,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchExistingPhotosFromGitHub();
 });
+
+// Tambahkan elemen modal leaderboard di bagian deklarasi atas script.js
+    const leaderboardModal = document.getElementById('leaderboard-modal');
+    const leaderboardBtn = document.getElementById('leaderboard-btn');
+    const closeLeaderboard = document.querySelector('.close-leaderboard');
+
+    // Event listener untuk tombol leaderboard (buka/tutup modal)
+    leaderboardBtn.addEventListener('click', () => {
+        leaderboardModal.classList.remove('hidden');
+        fetchLeaderboard(); // Ambil data terbaru saat dibuka
+    });
+
+    closeLeaderboard.addEventListener('click', () => {
+        leaderboardModal.classList.add('hidden');
+    });
+
+    leaderboardModal.addEventListener('click', (e) => {
+        if (e.target === leaderboardModal) {
+            leaderboardModal.classList.add('hidden');
+        }
+    });
