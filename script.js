@@ -1,210 +1,208 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Navigasi & Sidebar
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const sidebar = document.getElementById('sidebar');
+    const closeSidebar = document.getElementById('close-sidebar');
+    const menuGallery = document.getElementById('menu-gallery');
+    const menuGame = document.getElementById('menu-game');
+    
+    const gallerySection = document.getElementById('gallery-section');
+    const gameSection = document.getElementById('game-section');
+    const galleryContainer = document.getElementById('gallery-container');
+    
+    // Modal & Elemen Lain
     const uploadBtn = document.getElementById('upload-btn');
     const refreshBtn = document.getElementById('refresh-btn');
     const modal = document.getElementById('upload-modal');
     const closeBtn = document.querySelector('.close-btn');
     const submitUpload = document.getElementById('submit-upload');
     const fileInput = document.getElementById('file-input');
-    const galleryContainer = document.getElementById('gallery-container');
     const uploadStatus = document.getElementById('upload-status');
     const lightboxModal = document.getElementById('lightbox-modal');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.querySelector('.lightbox-close');
 
+    // Game Elements
+    const loginPanel = document.getElementById('login-panel');
+    const gameArena = document.getElementById('game-arena');
+    const loginBtn = document.getElementById('login-btn');
+    const playerNameInput = document.getElementById('player-name');
+    const currentPlayerDisplay = document.getElementById('current-player');
+    const startGameBtn = document.getElementById('start-game-btn');
+    const targetPhoto = document.getElementById('target-photo');
+    const scatterArea = document.getElementById('scatter-area');
+    const timeDisplay = document.getElementById('time-display');
+    const leaderboardList = document.getElementById('leaderboard-list');
+
     let photos = []; 
+    let currentPlayer = "";
+    let targetUrl = "";
+    let timerInterval;
+    let startTime;
+    let gameActive = false;
 
-    /* ====================================================================
-       BAGIAN 1: PENGATURAN TEMA
-       ==================================================================== */
-    const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
-    
-    function applyRandomTheme() {
-        themes.forEach(theme => document.body.classList.remove(theme));
-        const randomTheme = themes[Math.floor(Math.random() * themes.length)];
-        document.body.classList.add(randomTheme);
-        console.log("Tema aktif:", randomTheme);
-    }
+    // --- NAVIGASI ---
+    hamburgerBtn.addEventListener('click', () => sidebar.classList.add('active'));
+    closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
 
-    /* ====================================================================
-       BAGIAN 2: AUTO RENAME FOTO
-       ==================================================================== */
-    function generateAutoName(originalName) {
-        const date = new Date();
-        const timestamp = date.getTime();
-        const extension = originalName.split('.').pop();
-        return `Kenangan_${timestamp}.${extension}`;
-    }
+    menuGallery.addEventListener('click', (e) => {
+        e.preventDefault();
+        gallerySection.classList.remove('hidden');
+        gameSection.classList.add('hidden');
+        sidebar.classList.remove('active');
+        stopTimer();
+    });
 
-    /* ====================================================================
-       BAGIAN 3: AMBIL FOTO OTOMATIS DARI GITHUB (Agar muncul di semua device)
-       ==================================================================== */
+    menuGame.addEventListener('click', (e) => {
+        e.preventDefault();
+        gallerySection.classList.add('hidden');
+        gameSection.classList.remove('hidden');
+        sidebar.classList.remove('active');
+        fetchLeaderboard();
+    });
+
+    // --- AMBIL FOTO GITHUB ---
     async function fetchExistingPhotosFromGitHub() {
         try {
-            // Mengambil daftar file dari folder "foto-kenangan" di repo GitHub Anda
             const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/foto-kenangan`);
             const files = await response.json();
-
             if (Array.isArray(files)) {
-                // Saring hanya file gambar dan ambil link download_url-nya
-                photos = files
-                    .filter(file => file.type === 'file' && /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name))
-                    .map(file => file.download_url);
-                
+                photos = files.filter(f => f.type === 'file' && /\.(jpg|jpeg|png|webp|gif)$/i.test(f.name)).map(f => f.download_url);
                 renderGallery(); 
-            } else {
-                console.log("Folder foto-kenangan masih kosong.");
-                renderGallery();
             }
-        } catch (error) {
-            console.error("Gagal mengambil foto dari GitHub:", error);
-            renderGallery();
-        }
+        } catch (error) { console.error("Gagal mengambil foto dari GitHub:", error); }
     }
 
-    /* ====================================================================
-       BAGIAN 4: KONEKSI BACKEND API GITHUB (VERCEL)
-       ==================================================================== */
-    async function uploadToVercelGitHub(file, autoRenamedFilename) {
-        uploadStatus.textContent = `Menghubungkan ke API... Mengunggah ${autoRenamedFilename}`;
-        
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file); 
-            
-            reader.onload = async () => {
-                const base64Data = reader.result.split(',')[1]; 
-
-                try {
-                    const response = await fetch('/api/upload', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            filename: autoRenamedFilename,
-                            imageBase64: base64Data
-                        })
-                    });
-
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        resolve(result.imageUrl); 
-                    } else {
-                        reject(result.error);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    reject(error);
-                }
-            };
-            
-            reader.onerror = error => reject(error);
-        });
-    }
-
-    /* ====================================================================
-       BAGIAN 5: RENDER GALERI
-       ==================================================================== */
     function renderGallery() {
-        if (photos.length === 0) {
-            galleryContainer.innerHTML = '<div class="empty-state">Belum ada foto kenangan. Silakan upload!</div>';
-            return;
-        }
-        
-        galleryContainer.innerHTML = ''; 
-        
+        galleryContainer.innerHTML = photos.length === 0 ? '<div class="empty-state">Belum ada foto.</div>' : ''; 
         photos.forEach(url => {
             const card = document.createElement('div');
             card.className = 'photo-card';
-            
-            const randomRot = Math.floor(Math.random() * 40) - 20;
-            card.style.setProperty('--rot', randomRot);
-            
+            card.style.setProperty('--rot', Math.floor(Math.random() * 40) - 20);
             const img = document.createElement('img');
             img.src = url;
-            
-            card.addEventListener('click', () => {
-                if (lightboxModal && lightboxImg) {
-                    lightboxModal.classList.remove('hidden');
-                    lightboxImg.src = url;
-                }
-            });
-            
+            card.addEventListener('click', () => { lightboxModal.classList.remove('hidden'); lightboxImg.src = url; });
             card.appendChild(img);
             galleryContainer.appendChild(card);
         });
     }
 
-    /* ====================================================================
-       BAGIAN 6: EVENT LISTENERS TOMBOL
-       ==================================================================== */
+    // --- LOGIKA GAME ---
+    loginBtn.addEventListener('click', () => {
+        const name = playerNameInput.value.trim();
+        if (!name) return alert("Isi nama dulu!");
+        currentPlayer = name;
+        currentPlayerDisplay.textContent = currentPlayer;
+        loginPanel.classList.add('hidden');
+        gameArena.classList.remove('hidden');
+    });
+
+    startGameBtn.addEventListener('click', () => {
+        if (photos.length < 5) return alert("Upload minimal 5 foto dulu di galeri!");
+        
+        targetUrl = photos[Math.floor(Math.random() * photos.length)];
+        targetPhoto.src = targetUrl;
+        
+        scatterArea.innerHTML = '';
+        let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, 25);
+        if(!gamePhotos.includes(targetUrl)) gamePhotos[0] = targetUrl;
+
+        gamePhotos.sort(() => 0.5 - Math.random()).forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.className = 'scattered-photo';
+            
+            const maxX = scatterArea.clientWidth - 110;
+            const maxY = scatterArea.clientHeight - 110;
+            img.style.left = `${Math.floor(Math.random() * maxX)}px`;
+            img.style.top = `${Math.floor(Math.random() * maxY)}px`;
+            img.style.transform = `rotate(${Math.floor(Math.random() * 90) - 45}deg)`;
+            img.style.zIndex = Math.floor(Math.random() * 100);
+
+            img.addEventListener('click', () => {
+                if(!gameActive) return;
+                if (url === targetUrl) winGame();
+                else img.style.zIndex = -1; // Penalti visual jika salah
+            });
+            scatterArea.appendChild(img);
+        });
+
+        gameActive = true;
+        startTime = Date.now();
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeDisplay.textContent = ((Date.now() - startTime) / 1000).toFixed(2);
+        }, 50);
+    });
+
+    function winGame() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        const finalTime = parseFloat(timeDisplay.textContent);
+        alert(`Yeay Ketemu! Waktu: ${finalTime} detik.`);
+        saveScoreToGitHub(currentPlayer, finalTime);
+    }
+
+    function stopTimer() {
+        gameActive = false;
+        clearInterval(timerInterval);
+        timeDisplay.textContent = "0.00";
+    }
+
+    // --- LEADERBOARD GITHUB API ---
+    async function fetchLeaderboard() {
+        leaderboardList.innerHTML = '<li>Memuat...</li>';
+        try {
+            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/leaderboard/scores.json`);
+            if (response.ok) {
+                const data = await response.json();
+                const scores = JSON.parse(atob(data.content)); // Decode Base64 dari GitHub
+                renderLeaderboardList(scores);
+            } else {
+                leaderboardList.innerHTML = '<li>Belum ada rekor.</li>';
+            }
+        } catch (error) { leaderboardList.innerHTML = '<li>Gagal memuat rekor.</li>'; }
+    }
+
+    function renderLeaderboardList(scores) {
+        leaderboardList.innerHTML = '';
+        scores.sort((a, b) => a.time - b.time).slice(0, 5).forEach((s, idx) => {
+            const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👏';
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${medal} ${s.name}</span> <span>${s.time}s</span>`;
+            leaderboardList.appendChild(li);
+        });
+    }
+
+    async function saveScoreToGitHub(name, time) {
+        leaderboardList.innerHTML = '<li>Menyimpan rekor...</li>';
+        try {
+            await fetch('/api/score', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, time })
+            });
+            fetchLeaderboard();
+        } catch (error) { console.error("Gagal menyimpan skor", error); }
+    }
+
+    // --- EVENT LAINNYA ---
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        applyRandomTheme();
-        renderGallery(); 
+        const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
+        themes.forEach(t => document.body.classList.remove(t));
+        document.body.classList.add(themes[Math.floor(Math.random() * themes.length)]);
+        if(!gallerySection.classList.contains('hidden')) renderGallery();
+        sidebar.classList.remove('active');
     });
 
     uploadBtn.addEventListener('click', (e) => {
         e.preventDefault();
         modal.classList.remove('hidden');
+        sidebar.classList.remove('active');
     });
-    
-    closeBtn.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        uploadStatus.textContent = '';
-        fileInput.value = '';
-    });
+    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    if(lightboxClose) lightboxClose.addEventListener('click', () => lightboxModal.classList.add('hidden'));
 
-    submitUpload.addEventListener('click', async () => {
-        const files = fileInput.files;
-        if (files.length === 0) {
-            alert("Pilih foto terlebih dahulu!");
-            return;
-        }
-
-        submitUpload.disabled = true;
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const newFilename = generateAutoName(file.name);
-            
-            try {
-                const uploadedUrl = await uploadToVercelGitHub(file, newFilename);
-                photos.push(uploadedUrl); 
-                uploadStatus.textContent = `Berhasil mengunggah ${newFilename}!`;
-            } catch (error) {
-                uploadStatus.textContent = `Gagal mengunggah ${newFilename}`;
-            }
-        }
-
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            submitUpload.disabled = false;
-            uploadStatus.textContent = '';
-            fileInput.value = '';
-            renderGallery(); 
-        }, 800);
-    });
-
-    /* ====================================================================
-       BAGIAN 7: EVENT LISTENER LIGHTBOX (ZOOM FOTO)
-       ==================================================================== */
-    if (lightboxClose) {
-        lightboxClose.addEventListener('click', () => {
-            lightboxModal.classList.add('hidden');
-        });
-    }
-
-    if (lightboxModal) {
-        lightboxModal.addEventListener('click', (e) => {
-            if (e.target !== lightboxImg) {
-                lightboxModal.classList.add('hidden');
-            }
-        });
-    }
-
-    // Jalankan fungsi awal saat website dibuka
-    applyRandomTheme();
-    fetchExistingPhotosFromGitHub(); // Menarik foto otomatis dari GitHub
+    fetchExistingPhotosFromGitHub();
 });
