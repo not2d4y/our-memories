@@ -28,7 +28,7 @@
         </div>
     </main>
 
- <!-- Container Utama Game -->
+<!-- Container Utama Game -->
     <main id="game-section" class="hidden">
         <!-- Panel Login -->
         <div id="login-panel" class="game-panel">
@@ -40,20 +40,18 @@
         <!-- Arena Game -->
         <div id="game-arena" class="hidden">
             <div class="game-header">
-                <!-- Box Foto Target + Tombol Aksi di Atasnya -->
+                <!-- Box Foto Target (Hanya tombol Mulai di atasnya) -->
                 <div class="target-clue">
                     <p>Cari foto ini!</p>
-                    <div class="game-actions">
-                        <button id="start-game-btn">Mulai / Acak</button>
-                        <button id="leaderboard-btn">🏆</button>
-                    </div>
+                    <button id="start-game-btn">Mulai / Acak</button>
                     <img id="target-photo" src="" alt="Target">
                 </div>
 
-                <!-- Info Pemain & Waktu -->
+                <!-- Info Pemain, Waktu, & Tombol Leaderboard di Sini -->
                 <div class="game-info">
                     <p>Pemain: <span id="current-player">-</span></p>
                     <p class="timer">Waktu: <span id="time-display">0.00</span> dtk</p>
+                    <button id="leaderboard-btn">🏆 Leaderboard</button>
                 </div>
             </div>
             
@@ -62,7 +60,7 @@
         </div>
     </main>
 
-    <!-- Modal Leaderboard (Tersembunyi, muncul jika tombol 🏆 diklik) -->
+    <!-- Modal Leaderboard -->
     <div id="leaderboard-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-leaderboard">&times;</span>
