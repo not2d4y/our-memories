@@ -34,6 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeDisplay = document.getElementById('time-display');
     const leaderboardList = document.getElementById('leaderboard-list');
 
+    // Modal Leaderboard Elements
+    const leaderboardModal = document.getElementById('leaderboard-modal');
+    const leaderboardBtn = document.getElementById('leaderboard-btn');
+    const closeLeaderboard = document.querySelector('.close-leaderboard');
+
     let photos = []; 
     let currentPlayer = "";
     let targetUrl = "";
@@ -41,12 +46,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let startTime;
     let gameActive = false;
 
+    // --- TEMA ACAK (RANDOM THEME) ---
+    const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
+    function applyRandomTheme() {
+        themes.forEach(theme => document.body.classList.remove(theme));
+        const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+        document.body.classList.add(randomTheme);
+        console.log("Tema acak aktif:", randomTheme);
+    }
+
+    // Jalankan tema acak pertama kali saat web dibuka
+    applyRandomTheme();
+
     // --- NAVIGASI ---
     hamburgerBtn.addEventListener('click', () => sidebar.classList.add('active'));
     closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
 
     menuGallery.addEventListener('click', (e) => {
         e.preventDefault();
+        applyRandomTheme(); // Ganti tema acak saat buka galeri
         gallerySection.classList.remove('hidden');
         gameSection.classList.add('hidden');
         sidebar.classList.remove('active');
@@ -55,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuGame.addEventListener('click', (e) => {
         e.preventDefault();
+        applyRandomTheme(); // Ganti tema acak saat buka game
         gallerySection.classList.add('hidden');
         gameSection.classList.remove('hidden');
         sidebar.classList.remove('active');
@@ -97,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameArena.classList.remove('hidden');
     });
 
-  startGameBtn.addEventListener('click', () => {
+    startGameBtn.addEventListener('click', () => {
         if (photos.length < 5) return alert("Upload minimal 5 foto dulu di galeri!");
         
         targetUrl = photos[Math.floor(Math.random() * photos.length)];
@@ -109,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Array untuk menyimpan titik koordinat foto yang sudah ditaruh
         const placedPositions = [];
-        // Minimal jarak antar foto (karena foto ukuran 100px, jarak 75px berarti overlap 25%)
         const minDistance = 75; 
 
         gamePhotos.sort(() => 0.5 - Math.random()).forEach(url => {
@@ -123,15 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
             let finalX, finalY;
             let overlapping = true;
             let attempts = 0;
-            const maxAttempts = 50; // Batas percobaan agar tidak error jika layar sempit
+            const maxAttempts = 50;
 
-            // Mencari posisi yang tidak terlalu menumpuk
             while (overlapping && attempts < maxAttempts) {
                 finalX = Math.floor(Math.random() * maxX);
                 finalY = Math.floor(Math.random() * maxY);
                 overlapping = false;
 
-                // Cek jarak dengan foto-foto yang sudah diletakkan sebelumnya
                 for (let pos of placedPositions) {
                     const dx = finalX - pos.x;
                     const dy = finalY - pos.y;
@@ -145,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 attempts++;
             }
 
-            // Simpan posisi aman yang didapat
             placedPositions.push({ x: finalX, y: finalY });
 
             img.style.left = `${finalX}px`;
@@ -156,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             img.addEventListener('click', () => {
                 if(!gameActive) return;
                 if (url === targetUrl) winGame();
-                else img.style.zIndex = -1; // Penalti visual jika salah
+                else img.style.zIndex = -1;
             });
             scatterArea.appendChild(img);
         });
@@ -183,8 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
         timeDisplay.textContent = "0.00";
     }
 
-   // --- LEADERBOARD GITHUB API (DENGAN LIVE UPDATE) ---
-    let currentLeaderboard = []; // Variabel untuk menyimpan rekor sementara
+    // --- LEADERBOARD GITHUB API (DENGAN LIVE UPDATE) ---
+    let currentLeaderboard = []; 
 
     async function fetchLeaderboard() {
         leaderboardList.innerHTML = '<li>Memuat...</li>';
@@ -193,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/leaderboard/scores.json?t=${antiCache}`);
             if (response.ok) {
                 const data = await response.json();
-                currentLeaderboard = JSON.parse(atob(data.content)); // Simpan data dari GitHub
+                currentLeaderboard = JSON.parse(atob(data.content)); 
                 renderLeaderboardList(currentLeaderboard);
             } else {
                 leaderboardList.innerHTML = '<li>Belum ada rekor.</li>';
@@ -205,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLeaderboardList(scores) {
         leaderboardList.innerHTML = '';
-        // Urutkan dan ambil top 5
         scores.sort((a, b) => a.time - b.time).slice(0, 5).forEach((s, idx) => {
             const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👏';
             const li = document.createElement('li');
@@ -215,28 +229,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function saveScoreToGitHub(name, time) {
-        // 1. LIVE UPDATE (Langsung tampil di layar tanpa nunggu loading)
         currentLeaderboard.push({ name, time });
         renderLeaderboardList(currentLeaderboard);
 
-        // 2. Simpan ke GitHub diam-diam di background
         try {
             await fetch('/api/score', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, time })
             });
-            // Tidak perlu fetch ulang karena layar sudah ter-update secara lokal
         } catch (error) { 
             console.error("Gagal menyimpan skor", error); 
         }
     }
+
+    // --- MODAL LEADERBOARD EVENT ---
+    if (leaderboardBtn) {
+        leaderboardBtn.addEventListener('click', () => {
+            leaderboardModal.classList.remove('hidden');
+            fetchLeaderboard(); 
+        });
+    }
+
+    if (closeLeaderboard) {
+        closeLeaderboard.addEventListener('click', () => {
+            leaderboardModal.classList.add('hidden');
+        });
+    }
+
+    if (leaderboardModal) {
+        leaderboardModal.addEventListener('click', (e) => {
+            if (e.target === leaderboardModal) {
+                leaderboardModal.classList.add('hidden');
+            }
+        });
+    }
+
     // --- EVENT LAINNYA ---
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
-        themes.forEach(t => document.body.classList.remove(t));
-        document.body.classList.add(themes[Math.floor(Math.random() * themes.length)]);
+        applyRandomTheme(); // Ganti tema acak saat tombol refresh diklik
         if(!gallerySection.classList.contains('hidden')) renderGallery();
         sidebar.classList.remove('active');
     });
@@ -246,29 +278,10 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('hidden');
         sidebar.classList.remove('active');
     });
+    
     closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    
     if(lightboxClose) lightboxClose.addEventListener('click', () => lightboxModal.classList.add('hidden'));
 
     fetchExistingPhotosFromGitHub();
 });
-
-// Tambahkan elemen modal leaderboard di bagian deklarasi atas script.js
-    const leaderboardModal = document.getElementById('leaderboard-modal');
-    const leaderboardBtn = document.getElementById('leaderboard-btn');
-    const closeLeaderboard = document.querySelector('.close-leaderboard');
-
-    // Event listener untuk tombol leaderboard (buka/tutup modal)
-    leaderboardBtn.addEventListener('click', () => {
-        leaderboardModal.classList.remove('hidden');
-        fetchLeaderboard(); // Ambil data terbaru saat dibuka
-    });
-
-    closeLeaderboard.addEventListener('click', () => {
-        leaderboardModal.classList.add('hidden');
-    });
-
-    leaderboardModal.addEventListener('click', (e) => {
-        if (e.target === leaderboardModal) {
-            leaderboardModal.classList.add('hidden');
-        }
-    });
