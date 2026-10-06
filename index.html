@@ -6,38 +6,75 @@
     <title>Foto Kenanganku</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-1"> <!-- Tema default sebelum diubah oleh JS -->
-    <!-- Menu Navigasi Pojok Kanan Atas (Opacity 30%) -->
-    <nav class="top-nav">
+<body class="theme-1">
+    <!-- Hamburger Button -->
+    <div class="hamburger-btn" id="hamburger-btn">☰</div>
+
+    <!-- Sidebar Navigation (Opacity 30%) -->
+    <nav id="sidebar" class="sidebar">
+        <span class="close-sidebar" id="close-sidebar">&times;</span>
         <ul>
-            <li><a href="#" id="upload-btn">Upload Foto</a></li>
-            <li><a href="#" id="refresh-btn">Refresh Tema</a></li>
+            <li><a href="#" id="menu-gallery">📸 Galeri</a></li>
+            <li><a href="#" id="upload-btn">⬆️️ Upload Foto</a></li>
+            <li><a href="#" id="refresh-btn">🎨 Ganti Tema</a></li>
+            <li><a href="#" id="menu-game">🎮 Main Game</a></li>
         </ul>
     </nav>
 
     <!-- Container Utama Galeri -->
-    <main id="gallery-container" class="gallery">
-        <!-- Foto akan di-render di sini secara dinamis oleh JavaScript -->
-        <div class="empty-state">Belum ada foto kenangan. Silakan upload!</div>
+    <main id="gallery-section" class="gallery">
+        <div id="gallery-container" class="gallery-inner">
+            <div class="empty-state">Belum ada foto kenangan. Silakan upload!</div>
+        </div>
     </main>
 
-    <!-- Modal untuk Upload Foto -->
+    <!-- Container Utama Game -->
+    <main id="game-section" class="hidden">
+        <!-- Panel Login -->
+        <div id="login-panel" class="game-panel">
+            <h2>Siapa yang main? 👀</h2>
+            <input type="text" id="player-name" placeholder="Nama kamu / ayang">
+            <button id="login-btn">Masuk</button>
+        </div>
+
+        <!-- Arena Game -->
+        <div id="game-arena" class="hidden">
+            <div class="game-header">
+                <div class="target-clue">
+                    <p>Cari foto ini!</p>
+                    <img id="target-photo" src="" alt="Target">
+                </div>
+                <div class="game-info">
+                    <p>Pemain: <span id="current-player">-</span></p>
+                    <p class="timer">Waktu: <span id="time-display">0.00</span> dtk</p>
+                    <button id="start-game-btn">Mulai / Acak Ulang</button>
+                </div>
+                <div class="leaderboard">
+                    <h3>🏆 Leaderboard (GitHub)</h3>
+                    <ul id="leaderboard-list"></ul>
+                </div>
+            </div>
+            <div id="scatter-area"></div>
+        </div>
+    </main>
+
+    <!-- Modal Upload -->
     <div id="upload-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <h2>Upload Foto Kenangan</h2>
             <input type="file" id="file-input" accept="image/*" multiple>
             <button id="submit-upload">Simpan ke Galeri</button>
-            <!-- Status proses auto-rename dan upload backend -->
             <p id="upload-status"></p>
         </div>
     </div>
 
-    <script src="script.js"></script>
-    <!-- Modal untuk Lightbox (Zoom Foto) -->
+    <!-- Modal Lightbox -->
     <div id="lightbox-modal" class="modal hidden">
         <span class="lightbox-close">&times;</span>
         <img class="lightbox-content" id="lightbox-img">
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
