@@ -265,7 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`/api/note?t=${Date.now()}`);
             if (res.ok) {
                 const data = await res.json();
-                currentNoteContent = data.content || "";
+                
+                // Jangan timpa jika data dari server kosong tapi local variable sudah terisi
+                if (data.content && data.content.trim() !== "") {
+                    currentNoteContent = data.content;
+                } else if (!data.content) {
+                    currentNoteContent = "";
+                }
                 
                 if (currentNoteContent.trim() !== "" && !data.isRead) {
                     floatingNoteBubble.classList.add('unread');
@@ -285,7 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetchNoteData();
 
             if (currentNoteContent.trim() === "") {
-                // Kalau kosong, langsung arahkan ke mode tulis
                 noteViewArea.classList.add('hidden');
                 noteEditArea.classList.remove('hidden');
                 noteTextarea.value = "";
@@ -294,7 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 noteEditArea.classList.add('hidden');
                 noteDisplayText.textContent = currentNoteContent;
 
-                // Tandai sebagai sudah dibaca
                 if (floatingNoteBubble.classList.contains('unread')) {
                     floatingNoteBubble.classList.remove('unread');
                     saveNoteToBackend(currentNoteContent, true);
@@ -324,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveNoteBtn.textContent = "Menyimpan...";
             saveNoteBtn.disabled = true;
 
-            await saveNoteToBackend(newContent, false); // false artinya belum dibaca / baru
+            await saveNoteToBackend(newContent, false); 
 
             saveNoteBtn.textContent = "💾 Simpan Catatan";
             saveNoteBtn.disabled = false;
