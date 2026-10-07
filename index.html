@@ -6,7 +6,7 @@
     <title>Foto Kenanganku</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-1">
+<body class="theme-3">
     <!-- Hamburger Button -->
     <div class="hamburger-btn" id="hamburger-btn">☰</div>
 
@@ -16,7 +16,7 @@
         <ul>
             <li><a href="#" id="menu-gallery">📸 Galeri</a></li>
             <li><a href="#" id="upload-btn">⬆ Upload Foto</a></li>
-            <li><a href="#" id="refresh-btn">🎨 Ganti Tema</a></li>
+            <li><a href="#" id="refresh-btn">🎨 Ganti Tema (Acak)</a></li>
             <li><a href="#" id="menu-game">🎮 Main Game</a></li>
         </ul>
     </nav>
@@ -39,6 +39,19 @@
 
         <!-- Arena Game -->
         <div id="game-arena" class="hidden">
+            <!-- Quick Theme Switcher (Ganti Tema Instan Tanpa Tutup Menu) -->
+            <div class="theme-switcher-bar">
+                <span>🎨 Pilih Tema:</span>
+                <div class="theme-buttons">
+                    <button class="theme-bubble t-pink" data-theme="theme-3" title="Pink Sakura">🌸</button>
+                    <button class="theme-bubble t-purple" data-theme="theme-5" title="Taro Milk">💜</button>
+                    <button class="theme-bubble t-mint" data-theme="theme-6" title="Mint Choco">🍃</button>
+                    <button class="theme-bubble t-peach" data-theme="theme-7" title="Peach Soda">🍑</button>
+                    <button class="theme-bubble t-yellow" data-theme="theme-8" title="Banana Milk">🍌</button>
+                    <button class="theme-bubble t-random" id="quick-random-theme" title="Acak Full!">🔀</button>
+                </div>
+            </div>
+
             <!-- Custom Dropdown Pilihan Game & Level -->
             <div class="game-mode-selector">
                 <!-- Dropdown Mode Game -->
