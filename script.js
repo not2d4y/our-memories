@@ -44,9 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameModeSelected = document.getElementById('game-mode-selected');
     const gameModeMenu = document.getElementById('game-mode-menu');
 
-    // Quick Theme Switcher Elements
-    const themeBubbles = document.querySelectorAll('.theme-bubble[data-theme]');
-    const randomThemeBtns = document.querySelectorAll('.t-random');
+    // Floating Bubble Theme Switcher Element
+    const floatingThemeBtn = document.getElementById('floating-theme-btn');
 
     let photos = []; 
     let currentPlayer = "";
@@ -68,20 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyRandomTheme();
 
-    // Quick Theme Switcher (Berlaku di Galeri & Game secara instan)
-    themeBubbles.forEach(bubble => {
-        bubble.addEventListener('click', () => {
-            const targetTheme = bubble.getAttribute('data-theme');
-            themes.forEach(t => document.body.classList.remove(t));
-            document.body.classList.add(targetTheme);
-        });
-    });
-
-    randomThemeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+    // Floating Bubble Click (Ganti tema random instan)
+    if (floatingThemeBtn) {
+        floatingThemeBtn.addEventListener('click', () => {
             applyRandomTheme();
         });
-    });
+    }
 
     // --- NAVIGASI ---
     hamburgerBtn.addEventListener('click', () => sidebar.classList.add('active'));
@@ -161,7 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
         photos.forEach(url => {
             const card = document.createElement('div');
             card.className = 'photo-card';
-            card.style.setProperty('--rot', Math.floor(Math.random() * 40) - 20);
+            // Rotasi miring acak kiri & kanan (-15 hingga 15 derajat)
+            const randomRotation = Math.floor(Math.random() * 31) - 15;
+            card.style.setProperty('--rot', randomRotation);
+            
             const img = document.createElement('img');
             img.src = url;
             card.addEventListener('click', () => { lightboxModal.classList.remove('hidden'); lightboxImg.src = url; });
