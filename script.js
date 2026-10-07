@@ -58,6 +58,59 @@ document.addEventListener('DOMContentLoaded', () => {
     let startTime;
     let gameActive = false;
 
+    // --- VERIFIKASI PASSCODE UTAMA ---
+    const mainLoginOverlay = document.getElementById('main-login-overlay');
+    const passcodeInput = document.getElementById('passcode-input');
+    const submitPasscodeBtn = document.getElementById('submit-passcode-btn');
+    const loginErrorMsg = document.getElementById('login-error-msg');
+
+    // Cek apakah user sudah pernah login sebelumnya di sesi ini
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+        mainLoginOverlay.classList.add('hidden');
+    }
+
+    async function handleLogin() {
+        const passcode = passcodeInput.value.trim();
+        if (passcode.length !== 6) {
+            loginErrorMsg.textContent = "Passcode harus 6 angka!";
+            loginErrorMsg.classList.remove('hidden');
+            return;
+        }
+
+        submitPasscodeBtn.textContent = "Memeriksa...";
+        submitPasscodeBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ passcode })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                mainLoginOverlay.classList.add('hidden');
+            } else {
+                loginErrorMsg.textContent = "Passcode salah, coba lagi ya! 🥺";
+                loginErrorMsg.classList.remove('hidden');
+                passcodeInput.value = '';
+            }
+        } catch (error) {
+            loginErrorMsg.textContent = "Terjadi kesalahan koneksi server.";
+            loginErrorMsg.classList.remove('hidden');
+        } finally {
+            submitPasscodeBtn.textContent = "Masuk";
+            submitPasscodeBtn.disabled = false;
+        }
+    }
+
+    submitPasscodeBtn.addEventListener('click', handleLogin);
+    passcodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+
     // --- PENGATURAN TEMA (8 PILIHAN) ---
     const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6', 'theme-7', 'theme-8'];
     
