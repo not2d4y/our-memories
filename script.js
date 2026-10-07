@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="dropdown-item" data-value="guess-hard">🟠 Hard</div>
             `;
             selectedLevelValue = 'guess-normal';
-            levelSelected.textContent = '🟡 Normal (50% Terlihat) ▾';
+            levelSelected.textContent = '🟡 Normal ▾';
         }
         bindLevelItems();
     }
