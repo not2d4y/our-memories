@@ -88,7 +88,7 @@ body {
 .sidebar ul li a:hover { color: #ffd1dc; }
 
 /* =========================================
-   CUSTOM DROPDOWN & ANIMASI SLIDE KE BAWAH
+   CUSTOM DROPDOWN - DIPISAH TOTAL AGAR TIDAK BENTROK
    ========================================= */
 .game-mode-selector {
     display: flex;
@@ -144,8 +144,8 @@ body {
     background: white;
 }
 
-/* Animasi Slide ke Bawah untuk Dropdown */
-.dropdown-menu {
+/* Dropdown Menu khusus Game Mode */
+#game-mode-menu {
     position: absolute;
     top: 110%;
     left: 0;
@@ -158,15 +158,41 @@ body {
     
     visibility: hidden;
     opacity: 0;
-    pointer-events: none; /* Mencegah klik bocor saat tersembunyi */
+    pointer-events: none;
     transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.dropdown-menu.show {
+#game-mode-menu.show {
     visibility: visible;
     opacity: 1;
-    pointer-events: auto; /* Aktif kembali saat terlihat */
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* Dropdown Menu khusus Level (Dipisah total dari game-mode-menu) */
+#level-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 2px solid #ffb6c1;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+    z-index: 100;
+    
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#level-menu.show {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
     transform: translateY(0);
 }
 
