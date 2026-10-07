@@ -116,12 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
             levelSelected.textContent = '🟡 Normal (10-15 Foto) ▾';
         } else if (mode === 'guess-photo') {
             levelMenu.innerHTML = `
-                <div class="dropdown-item" data-value="guess-easy">🟢 Easy (70% Terlihat)</div>
-                <div class="dropdown-item" data-value="guess-normal">🟡 Normal (50% Terlihat)</div>
-                <div class="dropdown-item" data-value="guess-hard">🟠 Hard (35% Terlihat)</div>
+                <div class="dropdown-item" data-value="guess-easy">🟢 Easy</div>
+                <div class="dropdown-item" data-value="guess-normal">🟡 Normal</div>
+                <div class="dropdown-item" data-value="guess-hard">🟠 Hard</div>
             `;
             selectedLevelValue = 'guess-normal';
-            levelSelected.textContent = '🟡 Normal (50% Terlihat) ▾';
+            levelSelected.textContent = '🟡 Normal ▾';
         }
         bindLevelItems();
     }
@@ -139,28 +139,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateLevelOptions('find-photo');
 
-    // --- CUSTOM DROPDOWN LOGIC (VERSI PERBAIKAN) ---
-    // Fungsi khusus untuk menutup semua menu
-    function closeAllDropdowns() {
-        if (gameModeMenu) gameModeMenu.classList.remove('show');
-        if (levelMenu) levelMenu.classList.remove('show');
-    }
-
+    // --- CUSTOM DROPDOWN LOGIC YANG SUDAH DIPERBAIKI ---
     if (levelSelected && levelMenu) {
         levelSelected.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isShowing = levelMenu.classList.contains('show');
-            closeAllDropdowns(); // Tutup semuanya dulu
-            if (!isShowing) levelMenu.classList.add('show'); // Baru buka jika sebelumnya tertutup
+            e.stopPropagation(); // Mencegah klik menyebar ke window
+            if (gameModeMenu) gameModeMenu.classList.remove('show'); // Pastikan dropdown game tertutup
+            levelMenu.classList.toggle('show'); // Buka/tutup dropdown level
         });
     }
 
     if (gameModeSelected && gameModeMenu) {
         gameModeSelected.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isShowing = gameModeMenu.classList.contains('show');
-            closeAllDropdowns(); // Tutup semuanya dulu
-            if (!isShowing) gameModeMenu.classList.add('show'); // Baru buka jika sebelumnya tertutup
+            e.stopPropagation(); // Mencegah klik menyebar ke window
+            if (levelMenu) levelMenu.classList.remove('show'); // Pastikan dropdown level tertutup
+            gameModeMenu.classList.toggle('show'); // Buka/tutup dropdown game
         });
 
         document.querySelectorAll('#game-mode-menu .dropdown-item:not(.disabled)').forEach(item => {
@@ -178,9 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Menutup menu kalau klik di area kosong
+    // Menutup dropdown otomatis jika user klik di sembarang tempat (di luar dropdown)
     window.addEventListener('click', () => {
-        closeAllDropdowns();
+        if (levelMenu) levelMenu.classList.remove('show');
+        if (gameModeMenu) gameModeMenu.classList.remove('show');
     });
 
     // --- AMBIL FOTO GITHUB ---
@@ -323,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let percentage = 0.5; // Normal
             if (selectedLevelValue === 'guess-easy') percentage = 0.7;
-            else if (selectedLevelValue === 'guess-hard') percentage = 0.35;
+            else if (selectedLevelValue === 'guess-hard') percentage = 0.25;
 
             const cropWidth = imgObj.width * percentage;
             const cropHeight = imgObj.height * percentage;
