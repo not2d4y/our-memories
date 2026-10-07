@@ -99,7 +99,18 @@
             </ul>
         </div>
     </div>
-
+    <!-- Halaman Login Utama Passcode -->
+    <div id="main-login-overlay" class="main-login-container">
+        <div class="main-login-box">
+            <h2>🔒 Masukkan Passcode</h2>
+            <p>Masukkan 6 angka rahasia untuk membuka kenangan kita:</p>
+            <div class="passcode-inputs">
+                <input type="password" maxlength="6" id="passcode-input" placeholder="••••••">
+            </div>
+            <button id="submit-passcode-btn">Masuk</button>
+            <p id="login-error-msg" class="error-text hidden">Passcode salah, coba lagi!</p>
+        </div>
+    </div>
     <!-- Modal Upload -->
     <div id="upload-modal" class="modal hidden">
         <div class="modal-content">
