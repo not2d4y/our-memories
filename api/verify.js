@@ -9,7 +9,12 @@ export default async function handler(req, res) {
     const SECRET_PASSCODE = process.env.APP_PASSCODE || '123456'; // Default jika belum diset
 
     if (passcode === SECRET_PASSCODE) {
-        return res.status(200).json({ success: true, message: 'Passcode benar!' });
+        // Mengembalikan status sukses beserta token sah untuk frontend
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Passcode benar!', 
+            token: 'AUTH_SUCCESS_TOKEN_99' 
+        });
     } else {
         return res.status(401).json({ success: false, error: 'Passcode salah!' });
     }
