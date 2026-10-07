@@ -62,12 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
         themes.forEach(theme => document.body.classList.remove(theme));
         const randomTheme = themes[Math.floor(Math.random() * themes.length)];
         document.body.classList.add(randomTheme);
-        console.log("Tema acak aktif:", randomTheme);
+        
+        // Setiap tema berganti, acak ulang juga orientasi kemiringan foto di galeri
+        if (!gallerySection.classList.contains('hidden')) {
+            renderGallery();
+        }
     }
 
     applyRandomTheme();
 
-    // Floating Bubble Click (Ganti tema random instan)
+    // Floating Bubble Click (Ganti tema random & acak ulang orientasi foto galeri)
     if (floatingThemeBtn) {
         floatingThemeBtn.addEventListener('click', () => {
             applyRandomTheme();
