@@ -50,20 +50,17 @@
                     <div class="dropdown-selected" id="game-mode-selected">🔍 Cari Foto di Layar ▾</div>
                     <div class="dropdown-menu" id="game-mode-menu">
                         <div class="dropdown-item" data-value="find-photo">🔍 Cari Foto di Layar</div>
-                        <div class="dropdown-item disabled" data-value="guess-photo">🧩 Tebak Foto (Segera)</div>
+                        <div class="dropdown-item" data-value="guess-photo">🧩 Tebak Foto (Potongan Misterius)</div>
                         <div class="dropdown-item disabled" data-value="puzzle-photo">🖼️ Puzzle Foto (Segera)</div>
                         <div class="dropdown-item disabled" data-value="memory-game">🧠 Memory Match (Segera)</div>
                     </div>
                 </div>
 
-                <!-- Dropdown Level -->
+                <!-- Dropdown Level (Dinamis menyesuaikan game) -->
                 <div class="custom-dropdown" id="level-dropdown">
                     <div class="dropdown-selected" id="level-selected">🟡 Normal (10-15 Foto) ▾</div>
                     <div class="dropdown-menu" id="level-menu">
-                        <div class="dropdown-item" data-value="easy">🟢 Easy (5-10 Foto)</div>
-                        <div class="dropdown-item" data-value="normal">🟡 Normal (10-15 Foto)</div>
-                        <div class="dropdown-item" data-value="hard">🟠 Hard (15-20 Foto)</div>
-                        <div class="dropdown-item" data-value="iloveyou">❤️ I Love You (Full Foto!)</div>
+                        <!-- Opsi akan di-generate otomatis oleh script JS sesuai mode game -->
                     </div>
                 </div>
             </div>
@@ -71,9 +68,13 @@
             <div class="game-header">
                 <!-- Box Foto Target (Simetris Kiri) -->
                 <div class="game-box target-clue">
-                    <p>Cari foto ini!</p>
+                    <p id="clue-title-text">Cari foto ini!</p>
                     <button id="start-game-btn">Mulai / Acak</button>
-                    <img id="target-photo" src="" alt="Target">
+                    <!-- Container Gambar / Potongan Misterius -->
+                    <div id="target-photo-container">
+                        <img id="target-photo" src="" alt="Target">
+                        <canvas id="guess-canvas" class="hidden"></canvas>
+                    </div>
                 </div>
 
                 <!-- Info Pemain, Waktu, & Tombol Leaderboard (Simetris Kanan) -->
@@ -83,7 +84,7 @@
                 </div>
             </div>
             
-            <!-- Tempat foto berserakan -->
+            <!-- Tempat foto berserakan / Pilihan tebakan -->
             <div id="scatter-area"></div>
         </div>
     </main>
