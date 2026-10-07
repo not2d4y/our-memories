@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameModeSelected = document.getElementById('game-mode-selected');
     const gameModeMenu = document.getElementById('game-mode-menu');
 
-    // Floating Bubble Theme Switcher Element
+    // Floating Bubble Switcher
     const floatingThemeBtn = document.getElementById('floating-theme-btn');
 
     let photos = []; 
@@ -116,12 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
             levelSelected.textContent = '🟡 Normal (10-15 Foto) ▾';
         } else if (mode === 'guess-photo') {
             levelMenu.innerHTML = `
-                <div class="dropdown-item" data-value="guess-easy">🟢 Easy (Potongan Besar)</div>
-                <div class="dropdown-item" data-value="guess-normal">🟡 Normal (Potongan Sedang)</div>
-                <div class="dropdown-item" data-value="guess-hard">🟠 Hard (Potongan Kecil)</div>
+                <div class="dropdown-item" data-value="guess-easy">🟢 Easy (70% Terlihat)</div>
+                <div class="dropdown-item" data-value="guess-normal">🟡 Normal (50% Terlihat)</div>
+                <div class="dropdown-item" data-value="guess-hard">🟠 Hard (35% Terlihat)</div>
             `;
             selectedLevelValue = 'guess-normal';
-            levelSelected.textContent = '🟡 Normal (Potongan Sedang) ▾';
+            levelSelected.textContent = '🟡 Normal (50% Terlihat) ▾';
         }
         bindLevelItems();
     }
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedLevelValue = item.getAttribute('data-value');
                 levelSelected.textContent = item.textContent + ' ▾';
                 levelMenu.classList.remove('show');
-                fetchLeaderboard(); // Perbarui leaderboard saat level/difficulty diubah
+                fetchLeaderboard(); 
             });
         });
     }
@@ -313,17 +313,20 @@ document.addEventListener('DOMContentLoaded', () => {
             guessCanvas.width = 75;
             guessCanvas.height = 75;
 
-            let cropSize = 100; 
-            if (selectedLevelValue === 'guess-easy') cropSize = 160;
-            else if (selectedLevelValue === 'guess-hard') cropSize = 55;
+            let percentage = 0.5; // Normal
+            if (selectedLevelValue === 'guess-easy') percentage = 0.7;
+            else if (selectedLevelValue === 'guess-hard') percentage = 0.35;
 
-            const maxSX = Math.max(0, imgObj.width - cropSize);
-            const maxSY = Math.max(0, imgObj.height - cropSize);
+            const cropWidth = imgObj.width * percentage;
+            const cropHeight = imgObj.height * percentage;
+
+            const maxSX = Math.max(0, imgObj.width - cropWidth);
+            const maxSY = Math.max(0, imgObj.height - cropHeight);
             const sx = Math.floor(Math.random() * (maxSX + 1));
             const sy = Math.floor(Math.random() * (maxSY + 1));
 
             ctx.clearRect(0, 0, 75, 75);
-            ctx.drawImage(imgObj, sx, sy, cropSize, cropSize, 0, 0, 75, 75);
+            ctx.drawImage(imgObj, sx, sy, cropWidth, cropHeight, 0, 0, 75, 75);
         };
 
         scatterArea.innerHTML = '';
@@ -386,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 const allScores = JSON.parse(atob(data.content)); 
                 
-                // Filter skor berdasarkan mode game DAN level/difficulty yang sedang aktif
                 currentLeaderboard = allScores.filter(s => s.mode === currentGameMode && s.difficulty === selectedLevelValue);
                 renderLeaderboardList(currentLeaderboard);
             } else {
