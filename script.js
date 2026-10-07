@@ -140,12 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateLevelOptions('find-photo');
 
-    // --- CUSTOM DROPDOWN LOGIC (TERPISAH & BERSIH) ---
+    // --- CUSTOM DROPDOWN LOGIC (STAY INDEPENDENT) ---
     if (gameModeSelected && gameModeMenu) {
         gameModeSelected.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Hanya tutup menu level, lalu toggle menu game mode sendiri
-            if (levelMenu) levelMenu.classList.remove('show');
+            // Hanya toggle menu game mode sendiri tanpa mengganggu levelMenu
             gameModeMenu.classList.toggle('show');
         });
 
@@ -155,8 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentGameMode = item.getAttribute('data-value');
                 gameModeSelected.textContent = item.textContent + ' ▾';
                 
-                // Tutup game mode menu, biarkan level menu tetap tertutup
-                gameModeMenu.classList.remove('show');
+                gameModeMenu.classList.remove('show'); // Tutup hanya setelah opsi dipilih
                 
                 updateLevelOptions(currentGameMode);
                 stopTimer();
@@ -171,13 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (levelSelected && levelMenu) {
         levelSelected.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Hanya tutup menu game mode, lalu toggle menu level sendiri
-            if (gameModeMenu) gameModeMenu.classList.remove('show');
+            // Hanya toggle menu level sendiri tanpa mengganggu gameModeMenu
             levelMenu.classList.toggle('show');
         });
     }
 
-    // Klik di luar dropdown akan menutup keduanya
+    // Dropdown hanya akan menutup jika user mengklik area di luar dropdown / layar kosong
     window.addEventListener('click', () => {
         if (levelMenu) levelMenu.classList.remove('show');
         if (gameModeMenu) gameModeMenu.classList.remove('show');
@@ -323,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let percentage = 0.5; // Normal
             if (selectedLevelValue === 'guess-easy') percentage = 0.7;
-            else if (selectedLevelValue === 'guess-hard') percentage = 0.35;
+            else if (selectedLevelValue === 'guess-hard') percentage = 0.25;
 
             const cropWidth = imgObj.width * percentage;
             const cropHeight = imgObj.height * percentage;
