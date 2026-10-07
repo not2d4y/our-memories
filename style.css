@@ -115,22 +115,19 @@ body {
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
     z-index: 100;
-    overflow: hidden;
     
     /* Efek Animasi Slide & Fade Awal */
-    max-height: 0;
+    visibility: hidden;
     opacity: 0;
     transform: translateY(-10px);
-    transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
-    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* Saat kelas 'hidden' dihapus dari JS, menu meluncur turun dengan mulus */
 .dropdown-menu:not(.hidden) {
-    max-height: 200px; 
+    visibility: visible;
     opacity: 1;
     transform: translateY(0);
-    pointer-events: auto;
 }
 
 /* =========================================
