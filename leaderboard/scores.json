@@ -8,7 +8,7 @@
     "time": 0.02
   },
   {
-    "name": "d",
+    "name": "d4y",
     "time": 0.61,
     "mode": "guess-photo",
     "difficulty": "guess-easy"
@@ -28,7 +28,7 @@
     "time": 0.95
   },
   {
-    "name": "d",
+    "name": "d4y",
     "time": 0.95,
     "mode": "guess-photo",
     "difficulty": "guess-easy"
