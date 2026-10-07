@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameModeSelected = document.getElementById('game-mode-selected');
     const gameModeMenu = document.getElementById('game-mode-menu');
 
+    // Quick Theme Switcher Elements
+    const themeBubbles = document.querySelectorAll('.theme-bubble[data-theme]');
+    const quickRandomThemeBtn = document.getElementById('quick-random-theme');
+
     let photos = []; 
     let currentPlayer = "";
     let targetUrl = "";
@@ -53,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameActive = false;
     let selectedLevelValue = 'normal'; // Default level
 
-    // --- PENGATURAN TEMA ---
-    const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
+    // --- PENGATURAN TEMA (8 PILIHAN) ---
+    const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6', 'theme-7', 'theme-8'];
     
     function applyRandomTheme() {
         themes.forEach(theme => document.body.classList.remove(theme));
@@ -64,6 +68,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     applyRandomTheme();
+
+    // Quick Theme Switcher Event
+    themeBubbles.forEach(bubble => {
+        bubble.addEventListener('click', () => {
+            const targetTheme = bubble.getAttribute('data-theme');
+            themes.forEach(t => document.body.classList.remove(t));
+            document.body.classList.add(targetTheme);
+        });
+    });
+
+    if (quickRandomThemeBtn) {
+        quickRandomThemeBtn.addEventListener('click', () => {
+            applyRandomTheme();
+        });
+    }
 
     // --- NAVIGASI ---
     hamburgerBtn.addEventListener('click', () => sidebar.classList.add('active'));
@@ -81,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menuGame.addEventListener('click', (e) => {
         e.preventDefault();
         themes.forEach(theme => document.body.classList.remove(theme));
-        document.body.classList.add('theme-3'); // Default Pink Sakura
+        document.body.classList.add('theme-3'); // Default Pink Sakura saat masuk game
         gallerySection.classList.add('hidden');
         gameSection.classList.remove('hidden');
         sidebar.classList.remove('active');
@@ -170,18 +189,17 @@ document.addEventListener('DOMContentLoaded', () => {
         
         scatterArea.innerHTML = '';
         
-        // Tentukan jumlah foto berdasarkan level kustom yang dipilih
         const level = selectedLevelValue;
         let count = 10;
         
         if (level === 'easy') {
-            count = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // Random 5 - 10
+            count = Math.floor(Math.random() * (10 - 5 + 1)) + 5; 
         } else if (level === 'normal') {
-            count = Math.floor(Math.random() * (15 - 10 + 1)) + 10; // Random 10 - 15
+            count = Math.floor(Math.random() * (15 - 10 + 1)) + 10; 
         } else if (level === 'hard') {
-            count = Math.floor(Math.random() * (20 - 15 + 1)) + 15; // Random 15 - 20
+            count = Math.floor(Math.random() * (20 - 15 + 1)) + 15; 
         } else if (level === 'iloveyou') {
-            count = photos.length; // Full foto dari storage
+            count = photos.length; 
         }
 
         let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, count);
@@ -222,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 attempts++;
             }
 
-            // Batasi posisi agar tidak melebihi border dan tidak memotong lebih dari 20% foto
             finalX = Math.max(0, Math.min(finalX, scatterArea.clientWidth - (photoSize * 0.8)));
             finalY = Math.max(0, Math.min(finalY, scatterArea.clientHeight - (photoSize * 0.8)));
 
@@ -263,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timeDisplay.textContent = "0.00";
     }
 
-    // --- LEADERBOARD GITHUB API (DENGAN LIVE UPDATE) ---
+    // --- LEADERBOARD GITHUB API ---
     let currentLeaderboard = []; 
 
     async function fetchLeaderboard() {
@@ -308,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- MODAL LEADERBOARD EVENT ---
     if (leaderboardBtn) {
         leaderboardBtn.addEventListener('click', () => {
             leaderboardModal.classList.remove('hidden');
@@ -330,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- EVENT LAINNYA ---
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
         applyRandomTheme(); 
