@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let photos = []; 
     let currentPlayer = "";
     let targetUrl = "";
-    let currentGameMode = 'find-photo'; // Default mode: Cari Foto
-    let selectedLevelValue = 'normal'; // Default level
+    let currentGameMode = 'find-photo'; 
+    let selectedLevelValue = 'normal'; 
     let timerInterval;
     let startTime;
     let gameActive = false;
@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedLevelValue = item.getAttribute('data-value');
                 levelSelected.textContent = item.textContent + ' ▾';
                 levelMenu.classList.remove('show');
+                fetchLeaderboard(); // Perbarui leaderboard saat level/difficulty diubah
             });
         });
     }
@@ -151,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameModeSelected.addEventListener('click', (e) => {
             e.stopPropagation();
             gameModeMenu.classList.toggle('show');
-            if (levelMenu) levelMenu.classList.remove('show');
+            if (levelMenu) levelMenu.classList.add('show');
         });
 
         document.querySelectorAll('#game-mode-menu .dropdown-item:not(.disabled)').forEach(item => {
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 scatterArea.innerHTML = '';
                 targetPhoto.src = '';
                 guessCanvas.classList.add('hidden');
-                fetchLeaderboard(); // Muat leaderboard terpisah sesuai mode game
+                fetchLeaderboard(); 
             });
         });
     }
@@ -312,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
             guessCanvas.width = 75;
             guessCanvas.height = 75;
 
-            let cropSize = 100; // Normal
+            let cropSize = 100; 
             if (selectedLevelValue === 'guess-easy') cropSize = 160;
             else if (selectedLevelValue === 'guess-hard') cropSize = 55;
 
@@ -373,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timeDisplay.textContent = "0.00";
     }
 
-    // --- LEADERBOARD GITHUB API (Pemisah Mode Game via scores.json) ---
+    // --- LEADERBOARD BERDASARKAN MODE & DIFFICULTY ---
     let currentLeaderboard = []; 
 
     async function fetchLeaderboard() {
@@ -385,8 +386,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 const allScores = JSON.parse(atob(data.content)); 
                 
-                // Filter skor berdasarkan mode game yang aktif agar leaderboard masing-masing terpisah
-                currentLeaderboard = allScores.filter(s => s.mode === currentGameMode);
+                // Filter skor berdasarkan mode game DAN level/difficulty yang sedang aktif
+                currentLeaderboard = allScores.filter(s => s.mode === currentGameMode && s.difficulty === selectedLevelValue);
                 renderLeaderboardList(currentLeaderboard);
             } else {
                 leaderboardList.innerHTML = '<li>Belum ada rekor.</li>';
@@ -411,14 +412,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function saveScoreToGitHub(name, time) {
-        currentLeaderboard.push({ name, time, mode: currentGameMode });
+        currentLeaderboard.push({ name, time, mode: currentGameMode, difficulty: selectedLevelValue });
         renderLeaderboardList(currentLeaderboard);
 
         try {
             await fetch('/api/score', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, time, mode: currentGameMode })
+                body: JSON.stringify({ name, time, mode: currentGameMode, difficulty: selectedLevelValue })
             });
         } catch (error) { 
             console.error("Gagal menyimpan skor", error); 
