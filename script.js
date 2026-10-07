@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
                 selectedLevelValue = item.getAttribute('data-value');
                 levelSelected.textContent = item.textContent + ' ▾';
-                closeAllDropdowns(); // Langsung tutup menu setelah milih
+                levelMenu.classList.remove('show'); 
                 fetchLeaderboard(); 
             });
         });
@@ -140,34 +140,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateLevelOptions('find-photo');
 
-    // --- CUSTOM DROPDOWN LOGIC (SUPER KETAT & ANTI BOCOR) ---
-    function closeAllDropdowns() {
-        if (gameModeMenu) gameModeMenu.classList.remove('show');
-        if (levelMenu) levelMenu.classList.remove('show');
-    }
-
-    // Klik Menu Mode Game
+    // --- CUSTOM DROPDOWN LOGIC (TERPISAH & BERSIH) ---
     if (gameModeSelected && gameModeMenu) {
         gameModeSelected.addEventListener('click', (e) => {
-            e.preventDefault();
             e.stopPropagation();
-            const isOpen = gameModeMenu.classList.contains('show');
-            closeAllDropdowns(); // Tutup paksa semuanya dulu
-            
-            // Kalau sebelumnya ketutup, sekarang baru buka
-            if (!isOpen) {
-                gameModeMenu.classList.add('show'); 
-            }
+            // Hanya tutup menu level, lalu toggle menu game mode sendiri
+            if (levelMenu) levelMenu.classList.remove('show');
+            gameModeMenu.classList.toggle('show');
         });
 
-        // Memilih game mode
         document.querySelectorAll('#game-mode-menu .dropdown-item:not(.disabled)').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentGameMode = item.getAttribute('data-value');
                 gameModeSelected.textContent = item.textContent + ' ▾';
                 
-                closeAllDropdowns(); // Langsung tutup menu setelah milih
+                // Tutup game mode menu, biarkan level menu tetap tertutup
+                gameModeMenu.classList.remove('show');
                 
                 updateLevelOptions(currentGameMode);
                 stopTimer();
@@ -179,24 +168,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Klik Menu Level
     if (levelSelected && levelMenu) {
         levelSelected.addEventListener('click', (e) => {
-            e.preventDefault();
             e.stopPropagation();
-            const isOpen = levelMenu.classList.contains('show');
-            closeAllDropdowns(); // Tutup paksa semuanya dulu
-            
-            // Kalau sebelumnya ketutup, sekarang baru buka
-            if (!isOpen) {
-                levelMenu.classList.add('show'); 
-            }
+            // Hanya tutup menu game mode, lalu toggle menu level sendiri
+            if (gameModeMenu) gameModeMenu.classList.remove('show');
+            levelMenu.classList.toggle('show');
         });
     }
 
-    // Klik di sembarang area luar akan menutup semua dropdown
+    // Klik di luar dropdown akan menutup keduanya
     window.addEventListener('click', () => {
-        closeAllDropdowns();
+        if (levelMenu) levelMenu.classList.remove('show');
+        if (gameModeMenu) gameModeMenu.classList.remove('show');
     });
 
     // --- AMBIL FOTO GITHUB ---
