@@ -158,6 +158,7 @@ body {
     
     visibility: hidden;
     opacity: 0;
+    pointer-events: none; /* Mencegah klik bocor saat tersembunyi */
     transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -165,6 +166,7 @@ body {
 .dropdown-menu.show {
     visibility: visible;
     opacity: 1;
+    pointer-events: auto; /* Aktif kembali saat terlihat */
     transform: translateY(0);
 }
 
@@ -436,7 +438,7 @@ body.theme-8 .photo-card { border: 6px solid #fff; border-radius: 12px; box-shad
     cursor: pointer; 
 }
 
-/* Styling Pilihan untuk Mode Tebak Foto (Grid Pilihan Ganda) */
+/* Styling Pilihan untuk Mode Tebak Foto */
 .guess-option-card {
     width: 95px;
     height: 95px;
