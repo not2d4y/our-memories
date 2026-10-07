@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 scatterArea.innerHTML = '';
                 targetPhoto.src = '';
                 guessCanvas.classList.add('hidden');
-                fetchLeaderboard(); // Muat leaderboard sesuai mode game yang dipilih
+                fetchLeaderboard(); // Muat leaderboard terpisah sesuai mode game
             });
         });
     }
@@ -373,19 +373,20 @@ document.addEventListener('DOMContentLoaded', () => {
         timeDisplay.textContent = "0.00";
     }
 
-    // --- LEADERBOARD Masing-masing Game (GitHub API) ---
+    // --- LEADERBOARD GITHUB API (Pemisah Mode Game via scores.json) ---
     let currentLeaderboard = []; 
 
     async function fetchLeaderboard() {
         leaderboardList.innerHTML = '<li>Memuat...</li>';
         try {
             const antiCache = new Date().getTime();
-            // Pisahkan file skor berdasarkan mode game yang aktif
-            const scoreFile = currentGameMode === 'guess-photo' ? 'leaderboard/scores-guess.json' : 'leaderboard/scores.json';
-            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/${scoreFile}?t=${antiCache}`);
+            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/leaderboard/scores.json?t=${antiCache}`);
             if (response.ok) {
                 const data = await response.json();
-                currentLeaderboard = JSON.parse(atob(data.content)); 
+                const allScores = JSON.parse(atob(data.content)); 
+                
+                // Filter skor berdasarkan mode game yang aktif agar leaderboard masing-masing terpisah
+                currentLeaderboard = allScores.filter(s => s.mode === currentGameMode);
                 renderLeaderboardList(currentLeaderboard);
             } else {
                 leaderboardList.innerHTML = '<li>Belum ada rekor.</li>';
@@ -397,6 +398,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLeaderboardList(scores) {
         leaderboardList.innerHTML = '';
+        if (scores.length === 0) {
+            leaderboardList.innerHTML = '<li>Belum ada rekor.</li>';
+            return;
+        }
         scores.sort((a, b) => a.time - b.time).slice(0, 5).forEach((s, idx) => {
             const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '👏';
             const li = document.createElement('li');
@@ -406,15 +411,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function saveScoreToGitHub(name, time) {
-        currentLeaderboard.push({ name, time });
+        currentLeaderboard.push({ name, time, mode: currentGameMode });
         renderLeaderboardList(currentLeaderboard);
 
         try {
-            const apiEndpoint = currentGameMode === 'guess-photo' ? '/api/score-guess' : '/api/score';
-            await fetch(apiEndpoint, {
+            await fetch('/api/score', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, time })
+                body: JSON.stringify({ name, time, mode: currentGameMode })
             });
         } catch (error) { 
             console.error("Gagal menyimpan skor", error); 
