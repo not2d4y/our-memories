@@ -246,6 +246,126 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gameModeMenu) gameModeMenu.classList.remove('show');
     });
 
+    // --- FITUR NOTES / CATATAN SPESIAL ---
+    const floatingNoteBubble = document.getElementById('floating-note-bubble');
+    const noteModal = document.getElementById('note-modal');
+    const closeNote = document.querySelector('.close-note');
+    const noteDisplayText = document.getElementById('note-display-text');
+    const noteViewArea = document.getElementById('note-view-area');
+    const noteEditArea = document.getElementById('note-edit-area');
+    const noteTextarea = document.getElementById('note-textarea');
+    const saveNoteBtn = document.getElementById('save-note-btn');
+    const editNoteBtn = document.getElementById('edit-note-btn');
+    const deleteNoteBtn = document.getElementById('delete-note-btn');
+
+    let currentNoteContent = "";
+
+    async function fetchNoteData() {
+        try {
+            const res = await fetch(`/api/note?t=${Date.now()}`);
+            if (res.ok) {
+                const data = await res.json();
+                currentNoteContent = data.content || "";
+                
+                if (currentNoteContent.trim() !== "" && !data.isRead) {
+                    floatingNoteBubble.classList.add('unread');
+                } else {
+                    floatingNoteBubble.classList.remove('unread');
+                }
+            }
+        } catch (error) {
+            console.error("Gagal memuat catatan", error);
+        }
+    }
+
+    // Buka Modal Notes
+    if (floatingNoteBubble) {
+        floatingNoteBubble.addEventListener('click', async () => {
+            noteModal.classList.remove('hidden');
+            await fetchNoteData();
+
+            if (currentNoteContent.trim() === "") {
+                // Kalau kosong, langsung arahkan ke mode tulis
+                noteViewArea.classList.add('hidden');
+                noteEditArea.classList.remove('hidden');
+                noteTextarea.value = "";
+            } else {
+                noteViewArea.classList.remove('hidden');
+                noteEditArea.classList.add('hidden');
+                noteDisplayText.textContent = currentNoteContent;
+
+                // Tandai sebagai sudah dibaca
+                if (floatingNoteBubble.classList.contains('unread')) {
+                    floatingNoteBubble.classList.remove('unread');
+                    saveNoteToBackend(currentNoteContent, true);
+                }
+            }
+        });
+    }
+
+    if (closeNote) {
+        closeNote.addEventListener('click', () => noteModal.classList.add('hidden'));
+    }
+
+    if (editNoteBtn) {
+        editNoteBtn.addEventListener('click', () => {
+            noteViewArea.classList.add('hidden');
+            noteEditArea.classList.remove('hidden');
+            noteTextarea.value = currentNoteContent;
+        });
+    }
+
+    // Simpan Catatan Baru
+    if (saveNoteBtn) {
+        saveNoteBtn.addEventListener('click', async () => {
+            const newContent = noteTextarea.value.trim();
+            if (!newContent) return alert("Catatan tidak boleh kosong!");
+
+            saveNoteBtn.textContent = "Menyimpan...";
+            saveNoteBtn.disabled = true;
+
+            await saveNoteToBackend(newContent, false); // false artinya belum dibaca / baru
+
+            saveNoteBtn.textContent = "💾 Simpan Catatan";
+            saveNoteBtn.disabled = false;
+            
+            currentNoteContent = newContent;
+            noteDisplayText.textContent = newContent;
+            noteEditArea.classList.add('hidden');
+            noteViewArea.classList.remove('hidden');
+            floatingNoteBubble.classList.add('unread');
+        });
+    }
+
+    // Hapus Catatan
+    if (deleteNoteBtn) {
+        deleteNoteBtn.addEventListener('click', async () => {
+            if (confirm("Yakin ingin menghapus catatan ini?")) {
+                await saveNoteToBackend("", true);
+                currentNoteContent = "";
+                noteDisplayText.textContent = "Belum ada catatan.";
+                floatingNoteBubble.classList.remove('unread');
+                noteModal.classList.add('hidden');
+            }
+        });
+    }
+
+    async function saveNoteToBackend(content, isRead) {
+        try {
+            await fetch('/api/note', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, isRead })
+            });
+        } catch (error) {
+            console.error("Gagal menyimpan catatan ke server", error);
+        }
+    }
+
+    // Panggil saat pertama kali load
+    fetchNoteData();
+
+
     // --- AMBIL FOTO GITHUB ---
     async function fetchExistingPhotosFromGitHub() {
         try {
