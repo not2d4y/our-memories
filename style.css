@@ -114,6 +114,34 @@ body {
     background: white;
 }
 
+/* Animasi Slide ke Bawah untuk Dropdown */
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 2px solid #ffb6c1;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+    z-index: 100;
+    overflow: hidden;
+    
+    /* Efek Animasi Slide & Fade */
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+/* Saat kelas 'hidden' dihapus, menu akan meluncur turun dengan mulus */
+.dropdown-menu:not(.hidden) {
+    max-height: 200px; /* Sesuaikan dengan tinggi isi menu */
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
 
 
 /* =========================================
