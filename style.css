@@ -8,6 +8,86 @@ body {
 }
 
 /* =========================================
+   MAIN PASSCODE LOGIN OVERLAY
+   ========================================= */
+.main-login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    transition: opacity 0.4s ease;
+}
+
+.main-login-box {
+    background: white;
+    padding: 35px 25px;
+    border-radius: 20px;
+    text-align: center;
+    width: 90%;
+    max-width: 340px;
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.4);
+    border: 3px solid #ffb6c1;
+}
+
+.main-login-box h2 {
+    color: #d81b60;
+    margin-bottom: 8px;
+    font-size: 20px;
+}
+
+.main-login-box p {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.main-login-box input {
+    width: 100%;
+    padding: 12px;
+    font-size: 22px;
+    letter-spacing: 8px;
+    text-align: center;
+    border: 2px solid #ffb6c1;
+    border-radius: 12px;
+    outline: none;
+    color: #d81b60;
+    background: #fff0f5;
+    margin-bottom: 15px;
+}
+
+.main-login-box button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%);
+    color: #d81b60;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    transition: transform 0.2s;
+}
+
+.main-login-box button:hover {
+    transform: scale(1.02);
+}
+
+.error-text {
+    color: #e63946;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+/* =========================================
    NAVIGATION MENU & SIDEBAR
    ========================================= */
 .top-nav { display: none; }
