@@ -426,3 +426,4 @@ body.theme-4 .photo-card {
 /* Sembunyikan gambar target kosong */
 #target-photo[src=""] { display: none; }
 #target-photo:not([src=""]) { display: inline-block; }
+
