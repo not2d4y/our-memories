@@ -1,25 +1,30 @@
-import { Octokit } from "@octokit/rest";
-
 export default async function handler(req, res) {
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const REPO_OWNER = 'not2d4y';
     const REPO_NAME = 'our-memories';
     const PATH = 'notes/note.json';
+    const githubApiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PATH}`;
 
-    const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    if (!GITHUB_TOKEN) {
+        return res.status(500).json({ error: 'GitHub Token belum diset di Environment Variables Vercel' });
+    }
 
     if (req.method === 'GET') {
         try {
-            const response = await octokit.repos.getContent({
-                owner: REPO_OWNER,
-                repo: REPO_NAME,
-                path: PATH,
-                headers: { 'Cache-Control': 'no-cache' }
+            const response = await fetch(`${githubApiUrl}?t=${Date.now()}`, {
+                headers: { 
+                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                    'User-Agent': 'Vercel-Serverless'
+                }
             });
-            const content = JSON.parse(Buffer.from(response.data.content, 'base64').toString('utf-8'));
-            return res.status(200).json(content);
+            if (response.ok) {
+                const data = await response.json();
+                const contentText = Buffer.from(data.content, 'base64').toString('utf-8');
+                const contentJson = JSON.parse(contentText);
+                return res.status(200).json(contentJson);
+            }
+            return res.status(200).json({ content: "", isRead: true });
         } catch (error) {
-            // Jika file notes/note.json belum ada di GitHub, kembalikan kosong tanpa menimpa
             return res.status(200).json({ content: "", isRead: true });
         }
     }
@@ -28,33 +33,45 @@ export default async function handler(req, res) {
         const { content, isRead } = req.body;
         try {
             let sha = null;
-            try {
-                const getResponse = await octokit.repos.getContent({
-                    owner: REPO_OWNER,
-                    repo: REPO_NAME,
-                    path: PATH
-                });
-                sha = getResponse.data.sha;
-            } catch (err) {
-                // File belum ada, tidak apa-apa karena akan dibuat baru
+            const getResponse = await fetch(githubApiUrl, {
+                headers: { 
+                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                    'User-Agent': 'Vercel-Serverless'
+                }
+            });
+            if (getResponse.ok) {
+                const data = await getResponse.json();
+                sha = data.sha;
             }
 
             const noteData = { content: content || "", isRead: isRead !== undefined ? isRead : false };
-            const updatedContentBase64 = Buffer.from(JSON.stringify(noteData, null, 2)).toString('base64');
+            const jsonString = JSON.stringify(noteData, null, 2);
+            const updatedContentBase64 = Buffer.from(jsonString).toString('base64');
 
-            await octokit.repos.createOrUpdateFileContents({
-                owner: REPO_OWNER,
-                repo: REPO_NAME,
-                path: PATH,
-                message: "Update note kenangan",
-                content: updatedContentBase64,
-                sha: sha
+            const payload = {
+                message: "Update note kenangan via app",
+                content: updatedContentBase64
+            };
+            if (sha) payload.sha = sha;
+
+            const putResponse = await fetch(githubApiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'Vercel-Serverless'
+                },
+                body: JSON.stringify(payload)
             });
 
-            return res.status(200).json({ success: true });
+            if (putResponse.ok) {
+                return res.status(200).json({ success: true });
+            } else {
+                const errData = await putResponse.json();
+                return res.status(400).json({ error: errData.message });
+            }
         } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: 'Server error' });
+            return res.status(500).json({ error: error.message });
         }
     }
 
