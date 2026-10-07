@@ -25,6 +25,29 @@
     <div id="protected-content" class="hidden">
         <!-- Hamburger Button -->
         <div class="hamburger-btn" id="hamburger-btn">☰</div>
+    <!-- Floating Floating Note Bubble (Keliling Layar) -->
+    <div id="floating-note-bubble" class="floating-note-bubble" title="Ada catatan baru! 💌">
+        💌✨
+    </div>
+
+    <!-- Modal Notes / Catatan -->
+    <div id="note-modal" class="modal hidden">
+        <div class="modal-content cute-note-box">
+            <span class="close-note">&times;</span>
+            <h2>💌 Catatan Spesial Kita</h2>
+            <div id="note-view-area">
+                <p id="note-display-text" class="note-text-display">Memuat catatan...</p>
+                <div class="note-actions">
+                    <button id="edit-note-btn" class="cute-btn-secondary">Tulis / Ganti Catatan</button>
+                    <button id="delete-note-btn" class="cute-btn-danger">Hapus Catatan</button>
+                </div>
+            </div>
+            <div id="note-edit-area" class="hidden">
+                <textarea id="note-textarea" placeholder="Tulis catatan manis di sini..."></textarea>
+                <button id="save-note-btn" class="cute-btn-primary">💾 Simpan Catatan</button>
+            </div>
+        </div>
+    </div>
 
         <!-- Floating Bubble Ganti Tema Instan (Acak) -->
         <button class="floating-theme-btn" id="floating-theme-btn" title="Ganti Tema Acak!">
