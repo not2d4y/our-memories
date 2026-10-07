@@ -16,17 +16,57 @@ body {
     position: fixed;
     top: 20px;
     right: 25px;
-    font-size: 30px;
+    font-size: 24px;
     color: white;
     background: rgba(0, 0, 0, 0.3); 
-    padding: 5px 15px;
-    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     cursor: pointer;
     z-index: 1001;
     backdrop-filter: blur(5px);
     transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 .hamburger-btn:hover { transform: scale(1.1); }
+
+/* =========================================
+   FLOATING THEME BUBBLE (Gelembung Ganti Tema)
+   ========================================= */
+.floating-theme-btn {
+    position: fixed;
+    top: 75px;
+    right: 27px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid #ffb6c1;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    backdrop-filter: blur(5px);
+    animation: floatingBubble 3s ease-in-out infinite;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.floating-theme-btn:hover {
+    transform: scale(1.15) rotate(15deg);
+    background: white;
+}
+
+@keyframes floatingBubble {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0px); }
+}
 
 .sidebar {
     position: fixed;
@@ -46,63 +86,6 @@ body {
 .sidebar ul li { margin-bottom: 25px; }
 .sidebar ul li a { color: white; text-decoration: none; font-size: 18px; font-weight: bold; display: block; }
 .sidebar ul li a:hover { color: #ffd1dc; }
-
-/* =========================================
-   QUICK THEME SWITCHER BAR
-   ========================================= */
-.theme-switcher-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 6px 12px;
-    border-radius: 12px;
-    border: 2px solid #ffb6c1;
-    width: 100%;
-    margin-bottom: 10px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-}
-
-.gallery-switcher {
-    max-width: 600px;
-    margin-bottom: 20px;
-}
-
-.theme-switcher-bar span {
-    font-size: 11px;
-    font-weight: bold;
-    color: #d81b60;
-}
-
-.theme-buttons {
-    display: flex;
-    gap: 6px;
-}
-
-.theme-bubble {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: 2px solid white;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease;
-}
-
-.theme-bubble:hover {
-    transform: scale(1.15);
-}
-
-.t-pink { background: #ffd1dc; }
-.t-purple { background: #e3d5ff; }
-.t-mint { background: #d8f3dc; }
-.t-peach { background: #ffdad6; }
-.t-yellow { background: #fefae0; }
-.t-random { background: #ffb703; }
 
 /* =========================================
    CUSTOM DROPDOWN & ANIMASI SLIDE KE BAWAH
@@ -189,16 +172,16 @@ body {
    PENGATURAN 8 VARIASI TEMA CUTE
    ========================================= */
 body.theme-1 { background-color: #1a1a1a; }
-body.theme-1 .photo-card { border: 10px solid #fff; box-shadow: 2px 2px 15px rgba(0,0,0,0.8); transform: rotate(calc(var(--rot) * 1deg)); }
+body.theme-1 .photo-card { border: 10px solid #fff; box-shadow: 2px 2px 15px rgba(0,0,0,0.8); }
 
 body.theme-2 { background-color: #f4f1ea; }
-body.theme-2 .photo-card { border: 15px solid #fff; border-bottom-width: 45px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transform: rotate(calc(var(--rot) * -1deg)); }
+body.theme-2 .photo-card { border: 15px solid #fff; border-bottom-width: 45px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
 
 body.theme-3 { background-color: #ffd1dc; background-image: radial-gradient(#ffb6c1 10%, transparent 11%); background-size: 20px 20px; }
 body.theme-3 .photo-card { border: 5px solid #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(255,105,180,0.4); }
 
 body.theme-4 { background-color: #a2d2ff; }
-body.theme-4 .photo-card { border: 8px solid #fff; border-radius: 5px; box-shadow: 4px 4px 0 #333; transform: rotate(calc(var(--rot) * 2deg)); }
+body.theme-4 .photo-card { border: 8px solid #fff; border-radius: 5px; box-shadow: 4px 4px 0 #333; }
 
 /* Taro Milk */
 body.theme-5 { background-color: #e3d5ff; background-image: radial-gradient(#c7b8ea 10%, transparent 11%); background-size: 20px 20px; }
@@ -217,7 +200,7 @@ body.theme-8 { background-color: #fefae0; background-image: radial-gradient(#fae
 body.theme-8 .photo-card { border: 6px solid #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(212, 163, 89, 0.2); }
 
 /* =========================================
-   GALLERY & CARD LAYOUT
+   GALLERY & CARD LAYOUT (Rotasi Miring Kiri-Kanan)
    ========================================= */
 .gallery {
     display: flex;
@@ -236,6 +219,8 @@ body.theme-8 .photo-card { border: 6px solid #fff; border-radius: 12px; box-shad
     transition: transform 0.3s ease, z-index 0s;
     cursor: pointer;
     background: white;
+    /* Rotasi miring acak kiri/kanan diatur lewat inline style --rot di JS */
+    transform: rotate(calc(var(--rot) * 1deg));
 }
 .photo-card img { width: 100%; height: auto; display: block; object-fit: cover; }
 .photo-card:hover { transform: scale(1.15) rotate(0deg) !important; z-index: 50; position: relative; }
