@@ -47,28 +47,30 @@ body {
 .sidebar ul li a { color: white; text-decoration: none; font-size: 18px; font-weight: bold; display: block; }
 .sidebar ul li a:hover { color: #ffd1dc; }
 
-/* Styling Dropdown Game & Level */
+/* Styling Dropdown Game & Level agar Simetris */
 .game-mode-selector {
     display: flex;
-    gap: 10px;
+    justify-content: space-between;
     width: 100%;
-    max-width: 600px;
+    gap: 10px;
     margin-bottom: 10px;
 }
 
 .game-mode-selector select {
-    flex: 1;
-    padding: 10px;
+    width: 48%; /* Membagi rata persis seperti .game-box */
+    padding: 10px 8px;
     background: white;
     border: 2px solid #ffb6c1;
     border-radius: 12px;
     color: #d81b60;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 12px;
     outline: none;
     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
     cursor: pointer;
+    text-overflow: ellipsis;
 }
+
 
 
 /* =========================================
