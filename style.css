@@ -114,6 +114,149 @@ body {
 .hamburger-btn:hover { transform: scale(1.1); }
 
 /* =========================================
+   FLOATING NOTE BUBBLE (KELILING LAYAR ANIMASI)
+   ========================================= */
+.floating-note-bubble {
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #ff69b4;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.5);
+    backdrop-filter: blur(5px);
+    animation: moveAroundScreen 12s linear infinite;
+    transition: transform 0.2s;
+}
+
+.floating-note-bubble:hover {
+    transform: scale(1.2);
+}
+
+/* Efek kedip kalau belum dibaca */
+.floating-note-bubble.unread {
+    animation: moveAroundScreen 12s linear infinite, unreadPulse 1.5s ease-in-out infinite;
+    border-color: #ff4500;
+    background: #fff0f5;
+}
+
+@keyframes unreadPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0.6); }
+    70% { box-shadow: 0 0 0 12px rgba(255, 69, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 69, 0, 0); }
+}
+
+/* Lintasan keliling layar */
+@keyframes moveAroundScreen {
+    0%   { top: 20px; left: 20px; }
+    25%  { top: 20px; left: calc(100vw - 70px); }
+    50%  { top: calc(100vh - 70px); left: calc(100vw - 70px); }
+    75%  { top: calc(100vh - 70px); left: 20px; }
+    100% { top: 20px; left: 20px; }
+}
+
+/* =========================================
+   CUTE NOTE MODAL STYLING
+   ========================================= */
+.cute-note-box {
+    background: #fff0f5 !important;
+    border: 3px solid #ffb6c1;
+    border-radius: 20px !important;
+    padding: 30px 20px 20px !important;
+    box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+}
+
+.cute-note-box h2 {
+    color: #d81b60;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.note-text-display {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px dashed #ffb6c1;
+    color: #555;
+    font-size: 14px;
+    min-height: 80px;
+    max-height: 180px;
+    overflow-y: auto;
+    text-align: left;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
+}
+
+.cute-note-box textarea {
+    width: 100%;
+    height: 100px;
+    padding: 12px;
+    border: 2px solid #ffb6c1;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+    background: white;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.note-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.cute-btn-primary {
+    width: 100%;
+    padding: 10px;
+    background: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(255, 105, 180, 0.3);
+}
+
+.cute-btn-secondary {
+    flex: 1;
+    padding: 10px;
+    background: white;
+    color: #d81b60;
+    border: 2px solid #ffb6c1;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cute-btn-danger {
+    flex: 1;
+    padding: 10px;
+    background: #ffe4e1;
+    color: #e63946;
+    border: 1px solid #ffb6c1;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-note {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #d81b60;
+}
+
+/* =========================================
    FLOATING THEME BUBBLE
    ========================================= */
 .floating-theme-btn {
