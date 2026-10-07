@@ -5,22 +5,21 @@ export default async function handler(req, res) {
     const REPO_OWNER = 'not2d4y';
     const REPO_NAME = 'our-memories';
     const PATH = 'notes/note.json';
-    const githubApiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PATH}`;
 
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
     if (req.method === 'GET') {
         try {
-            const response = await fetch(`${githubApiUrl}?t=${Date.now()}`, {
-                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
+            const response = await octokit.repos.getContent({
+                owner: REPO_OWNER,
+                repo: REPO_NAME,
+                path: PATH,
+                headers: { 'Cache-Control': 'no-cache' }
             });
-            if (response.ok) {
-                const data = await response.json();
-                const content = JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'));
-                return res.status(200).json(content);
-            }
-            return res.status(200).json({ content: "", isRead: true });
+            const content = JSON.parse(Buffer.from(response.data.content, 'base64').toString('utf-8'));
+            return res.status(200).json(content);
         } catch (error) {
+            // Jika file notes/note.json belum ada di GitHub, kembalikan kosong tanpa menimpa
             return res.status(200).json({ content: "", isRead: true });
         }
     }
@@ -29,39 +28,32 @@ export default async function handler(req, res) {
         const { content, isRead } = req.body;
         try {
             let sha = null;
-            const getResponse = await fetch(githubApiUrl, {
-                headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
-            });
-            if (getResponse.ok) {
-                const data = await getResponse.json();
-                sha = data.sha;
+            try {
+                const getResponse = await octokit.repos.getContent({
+                    owner: REPO_OWNER,
+                    repo: REPO_NAME,
+                    path: PATH
+                });
+                sha = getResponse.data.sha;
+            } catch (err) {
+                // File belum ada, tidak apa-apa karena akan dibuat baru
             }
 
             const noteData = { content: content || "", isRead: isRead !== undefined ? isRead : false };
             const updatedContentBase64 = Buffer.from(JSON.stringify(noteData, null, 2)).toString('base64');
 
-            const payload = {
+            await octokit.repos.createOrUpdateFileContents({
+                owner: REPO_OWNER,
+                repo: REPO_NAME,
+                path: PATH,
                 message: "Update note kenangan",
-                content: updatedContentBase64
-            };
-            if (sha) payload.sha = sha;
-
-            const putResponse = await fetch(githubApiUrl, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
+                content: updatedContentBase64,
+                sha: sha
             });
 
-            if (putResponse.ok) {
-                return res.status(200).json({ success: true });
-            } else {
-                const errData = await putResponse.json();
-                return res.status(400).json({ error: errData.message });
-            }
+            return res.status(200).json({ success: true });
         } catch (error) {
+            console.error(error);
             return res.status(500).json({ error: 'Server error' });
         }
     }
