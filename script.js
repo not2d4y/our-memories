@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const scatterArea = document.getElementById('scatter-area');
     const timeDisplay = document.getElementById('time-display');
     const leaderboardList = document.getElementById('leaderboard-list');
+    
+    // Level Select Element
+    const levelSelect = document.getElementById('level-select');
 
     // Modal Leaderboard Elements
     const leaderboardModal = document.getElementById('leaderboard-modal');
@@ -111,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LOGIKA GAME ---
+    // --- LOGIKA GAME & LEVEL ---
     loginBtn.addEventListener('click', () => {
         const name = playerNameInput.value.trim();
         if (!name) return alert("Isi nama dulu!");
@@ -128,20 +131,36 @@ document.addEventListener('DOMContentLoaded', () => {
         targetPhoto.src = targetUrl;
         
         scatterArea.innerHTML = '';
-        let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, 25);
+        
+        // Tentukan jumlah foto berdasarkan level yang dipilih secara random
+        const level = levelSelect ? levelSelect.value : 'normal';
+        let count = 10;
+        
+        if (level === 'easy') {
+            count = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // Random 5 - 10
+        } else if (level === 'normal') {
+            count = Math.floor(Math.random() * (15 - 10 + 1)) + 10; // Random 10 - 15
+        } else if (level === 'hard') {
+            count = Math.floor(Math.random() * (20 - 15 + 1)) + 15; // Random 15 - 20
+        } else if (level === 'iloveyou') {
+            count = photos.length; // Full foto dari storage
+        }
+
+        let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, count);
         if(!gamePhotos.includes(targetUrl)) gamePhotos[0] = targetUrl;
 
         // Array untuk menyimpan titik koordinat foto agar tidak menumpuk 90%
         const placedPositions = [];
-        const minDistance = 75; 
+        const minDistance = 65; 
+        const photoSize = 85; // Ukuran foto di arena
 
         gamePhotos.sort(() => 0.5 - Math.random()).forEach(url => {
             const img = document.createElement('img');
             img.src = url;
             img.className = 'scattered-photo';
             
-            const maxX = scatterArea.clientWidth - 110;
-            const maxY = scatterArea.clientHeight - 110;
+            const maxX = scatterArea.clientWidth - photoSize;
+            const maxY = scatterArea.clientHeight - photoSize;
             
             let finalX, finalY;
             let overlapping = true;
@@ -165,6 +184,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 attempts++;
             }
+
+            // Batasi posisi agar tidak melebihi border dan tidak memotong lebih dari 20% foto
+            finalX = Math.max(0, Math.min(finalX, scatterArea.clientWidth - (photoSize * 0.8)));
+            finalY = Math.max(0, Math.min(finalY, scatterArea.clientHeight - (photoSize * 0.8)));
 
             placedPositions.push({ x: finalX, y: finalY });
 
