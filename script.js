@@ -116,12 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
             levelSelected.textContent = '🟡 Normal (10-15 Foto) ▾';
         } else if (mode === 'guess-photo') {
             levelMenu.innerHTML = `
-                <div class="dropdown-item" data-value="guess-easy">🟢 Easy (70% Terlihat)</div>
-                <div class="dropdown-item" data-value="guess-normal">🟡 Normal (50% Terlihat)</div>
-                <div class="dropdown-item" data-value="guess-hard">🟠 Hard (35% Terlihat)</div>
+                <div class="dropdown-item" data-value="guess-easy">🟢 Easy</div>
+                <div class="dropdown-item" data-value="guess-normal">🟡 Normal</div>
+                <div class="dropdown-item" data-value="guess-hard">🟠 Hard</div>
             `;
             selectedLevelValue = 'guess-normal';
-            levelSelected.textContent = '🟡 Normal (50% Terlihat) ▾';
+            levelSelected.textContent = '🟡 Normal ▾';
         }
         bindLevelItems();
     }
