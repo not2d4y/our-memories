@@ -1,1 +1,27 @@
-[{"name":"kaes","time":0.01},{"name":"d4y","time":0.02},{"name":"d4y","time":0.75},{"name":"d4y","time":0.95},{"name":"d4y","time":1}]
+[
+  {
+    "name": "kaes",
+    "time": 0.01
+  },
+  {
+    "name": "d4y",
+    "time": 0.02
+  },
+  {
+    "name": "d4y",
+    "time": 0.75
+  },
+  {
+    "name": "d4y",
+    "time": 0.95
+  },
+  {
+    "name": "d4y",
+    "time": 1
+  },
+  {
+    "name": "d4y",
+    "time": 1.55,
+    "mode": "find-photo"
+  }
+]
