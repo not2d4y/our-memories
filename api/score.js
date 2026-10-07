@@ -1,9 +1,10 @@
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    // Tangkap juga parameter 'mode' dari request body, default ke 'find-photo' jika tidak ada
-    const { name, time, mode } = req.body;
+    // Tangkap name, time, mode, dan difficulty dari request body
+    const { name, time, mode, difficulty } = req.body;
     const gameMode = mode || 'find-photo';
+    const gameDiff = difficulty || 'normal';
 
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN; 
     const REPO_OWNER = 'not2d4y'; 
@@ -12,7 +13,6 @@ export default async function handler(req, res) {
     const githubApiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${PATH}`;
 
     try {
-        // 1. Cek apakah file scores.json sudah ada
         const getResponse = await fetch(githubApiUrl, {
             headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
         });
@@ -26,16 +26,15 @@ export default async function handler(req, res) {
             currentScores = JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'));
         }
 
-        // 2. Tambahkan skor baru beserta properti mode-nya
-        currentScores.push({ name, time, mode: gameMode });
-        currentScores.sort((a, b) => a.time - b.time); // Urutkan dari tercepat
-        currentScores = currentScores.slice(0, 20); // Batasi penyimpanan agar tidak terlalu besar (bisa menampung top scores dari berbagai mode)
+        // Simpan skor lengkap dengan mode dan difficulty
+        currentScores.push({ name, time, mode: gameMode, difficulty: gameDiff });
+        currentScores.sort((a, b) => a.time - b.time); 
+        currentScores = currentScores.slice(0, 50); // Batasi total penyimpanan
         
         const updatedContentBase64 = Buffer.from(JSON.stringify(currentScores, null, 2)).toString('base64');
 
-        // 3. Siapkan payload
         const payload = {
-            message: `Update leaderboard oleh ${name} (${gameMode})`,
+            message: `Update leaderboard oleh ${name} (${gameMode} - ${gameDiff})`,
             content: updatedContentBase64
         };
         
@@ -43,7 +42,6 @@ export default async function handler(req, res) {
             payload.sha = sha;
         }
 
-        // 4. Simpan (Push) kembali ke GitHub
         const putResponse = await fetch(githubApiUrl, {
             method: 'PUT',
             headers: {
