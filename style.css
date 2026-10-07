@@ -63,6 +63,11 @@ body {
     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }
 
+.gallery-switcher {
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
 .theme-switcher-bar span {
     font-size: 11px;
     font-weight: bold;
@@ -181,7 +186,7 @@ body {
 }
 
 /* =========================================
-   PENGATURAN PILIHAN TEMA CUTE (8 VARIASI)
+   PENGATURAN 8 VARIASI TEMA CUTE
    ========================================= */
 body.theme-1 { background-color: #1a1a1a; }
 body.theme-1 .photo-card { border: 10px solid #fff; box-shadow: 2px 2px 15px rgba(0,0,0,0.8); transform: rotate(calc(var(--rot) * 1deg)); }
@@ -189,26 +194,25 @@ body.theme-1 .photo-card { border: 10px solid #fff; box-shadow: 2px 2px 15px rgb
 body.theme-2 { background-color: #f4f1ea; }
 body.theme-2 .photo-card { border: 15px solid #fff; border-bottom-width: 45px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transform: rotate(calc(var(--rot) * -1deg)); }
 
-/* Pink Sakura */
 body.theme-3 { background-color: #ffd1dc; background-image: radial-gradient(#ffb6c1 10%, transparent 11%); background-size: 20px 20px; }
 body.theme-3 .photo-card { border: 5px solid #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(255,105,180,0.4); }
 
 body.theme-4 { background-color: #a2d2ff; }
 body.theme-4 .photo-card { border: 8px solid #fff; border-radius: 5px; box-shadow: 4px 4px 0 #333; transform: rotate(calc(var(--rot) * 2deg)); }
 
-/* Taro Milk (Ungu Pastel) */
+/* Taro Milk */
 body.theme-5 { background-color: #e3d5ff; background-image: radial-gradient(#c7b8ea 10%, transparent 11%); background-size: 20px 20px; }
 body.theme-5 .photo-card { border: 6px solid #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.2); }
 
-/* Mint Choco (Hijau Mint Segar) */
+/* Mint Choco */
 body.theme-6 { background-color: #d8f3dc; background-image: radial-gradient(#b7e4c7 10%, transparent 11%); background-size: 20px 20px; }
 body.theme-6 .photo-card { border: 6px solid #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2); }
 
-/* Peach Soda (Oranye Pastel Manis) */
+/* Peach Soda */
 body.theme-7 { background-color: #ffdad6; background-image: radial-gradient(#f4acb7 10%, transparent 11%); background-size: 20px 20px; }
 body.theme-7 .photo-card { border: 6px solid #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2); }
 
-/* Banana Milk (Kuning Soft Lembut) */
+/* Banana Milk */
 body.theme-8 { background-color: #fefae0; background-image: radial-gradient(#faedcd 10%, transparent 11%); background-size: 20px 20px; }
 body.theme-8 .photo-card { border: 6px solid #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(212, 163, 89, 0.2); }
 
