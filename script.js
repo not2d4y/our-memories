@@ -33,14 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const scatterArea = document.getElementById('scatter-area');
     const timeDisplay = document.getElementById('time-display');
     const leaderboardList = document.getElementById('leaderboard-list');
-    
-    // Level Select Element
-    const levelSelect = document.getElementById('level-select');
 
     // Modal Leaderboard Elements
     const leaderboardModal = document.getElementById('leaderboard-modal');
     const leaderboardBtn = document.getElementById('leaderboard-btn');
     const closeLeaderboard = document.querySelector('.close-leaderboard');
+
+    // Custom Dropdown Elements
+    const levelSelected = document.getElementById('level-selected');
+    const levelMenu = document.getElementById('level-menu');
+    const gameModeSelected = document.getElementById('game-mode-selected');
+    const gameModeMenu = document.getElementById('game-mode-menu');
 
     let photos = []; 
     let currentPlayer = "";
@@ -48,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval;
     let startTime;
     let gameActive = false;
+    let selectedLevelValue = 'normal'; // Default level
 
     // --- PENGATURAN TEMA ---
     const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4'];
@@ -59,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Tema acak aktif:", randomTheme);
     }
 
-    // Jalankan tema acak pertama kali saat web dibuka
     applyRandomTheme();
 
     // --- NAVIGASI ---
@@ -68,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuGallery.addEventListener('click', (e) => {
         e.preventDefault();
-        applyRandomTheme(); // Galeri tetap menggunakan tema acak
+        applyRandomTheme(); 
         gallerySection.classList.remove('hidden');
         gameSection.classList.add('hidden');
         sidebar.classList.remove('active');
@@ -77,15 +80,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuGame.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        // KHUSUS MENU GAME: Default ke Tema 3 (Pink Sakura polkadot)
         themes.forEach(theme => document.body.classList.remove(theme));
-        document.body.classList.add('theme-3'); 
-
+        document.body.classList.add('theme-3'); // Default Pink Sakura
         gallerySection.classList.add('hidden');
         gameSection.classList.remove('hidden');
         sidebar.classList.remove('active');
         fetchLeaderboard();
+    });
+
+    // --- CUSTOM DROPDOWN LOGIC ---
+    if (levelSelected && levelMenu) {
+        levelSelected.addEventListener('click', (e) => {
+            e.stopPropagation();
+            levelMenu.classList.toggle('hidden');
+            if (gameModeMenu) gameModeMenu.classList.add('hidden');
+        });
+
+        document.querySelectorAll('#level-menu .dropdown-item:not(.disabled)').forEach(item => {
+            item.addEventListener('click', () => {
+                selectedLevelValue = item.getAttribute('data-value');
+                levelSelected.textContent = item.textContent + ' ▾';
+                levelMenu.classList.add('hidden');
+            });
+        });
+    }
+
+    if (gameModeSelected && gameModeMenu) {
+        gameModeSelected.addEventListener('click', (e) => {
+            e.stopPropagation();
+            gameModeMenu.classList.toggle('hidden');
+            if (levelMenu) levelMenu.classList.add('hidden');
+        });
+
+        document.querySelectorAll('#game-mode-menu .dropdown-item:not(.disabled)').forEach(item => {
+            item.addEventListener('click', () => {
+                gameModeSelected.textContent = item.textContent + ' ▾';
+                gameModeMenu.classList.add('hidden');
+            });
+        });
+    }
+
+    // Tutup dropdown jika klik di luar
+    window.addEventListener('click', () => {
+        if (levelMenu) levelMenu.classList.add('hidden');
+        if (gameModeMenu) gameModeMenu.classList.add('hidden');
     });
 
     // --- AMBIL FOTO GITHUB ---
@@ -132,8 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         scatterArea.innerHTML = '';
         
-        // Tentukan jumlah foto berdasarkan level yang dipilih secara random
-        const level = levelSelect ? levelSelect.value : 'normal';
+        // Tentukan jumlah foto berdasarkan level kustom yang dipilih
+        const level = selectedLevelValue;
         let count = 10;
         
         if (level === 'easy') {
@@ -149,10 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, count);
         if(!gamePhotos.includes(targetUrl)) gamePhotos[0] = targetUrl;
 
-        // Array untuk menyimpan titik koordinat foto agar tidak menumpuk 90%
         const placedPositions = [];
         const minDistance = 65; 
-        const photoSize = 85; // Ukuran foto di arena
+        const photoSize = 85; 
 
         gamePhotos.sort(() => 0.5 - Math.random()).forEach(url => {
             const img = document.createElement('img');
@@ -296,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- EVENT LAINNYA ---
     refreshBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        applyRandomTheme(); // Ganti tema acak saat tombol refresh diklik
+        applyRandomTheme(); 
         if(!gallerySection.classList.contains('hidden')) renderGallery();
         sidebar.classList.remove('active');
     });
