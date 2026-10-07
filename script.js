@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gallerySection = document.getElementById('gallery-section');
     const gameSection = document.getElementById('game-section');
     const galleryContainer = document.getElementById('gallery-container');
+    const protectedContent = document.getElementById('protected-content');
     
     // Modal & Elemen Lain
     const uploadBtn = document.getElementById('upload-btn');
@@ -58,15 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let startTime;
     let gameActive = false;
 
-    // --- VERIFIKASI PASSCODE UTAMA ---
+    // --- VERIFIKASI PASSCODE UTAMA YANG AMAN DARI INSPECT ELEMENT ---
     const mainLoginOverlay = document.getElementById('main-login-overlay');
     const passcodeInput = document.getElementById('passcode-input');
     const submitPasscodeBtn = document.getElementById('submit-passcode-btn');
     const loginErrorMsg = document.getElementById('login-error-msg');
 
-    // Cek apakah user sudah pernah login sebelumnya di sesi ini
-    if (sessionStorage.getItem('isLoggedIn') === 'true') {
-        mainLoginOverlay.classList.add('hidden');
+    // Cek apakah sudah login sah sebelumnya di sesi ini
+    if (sessionStorage.getItem('auth_token') === 'AUTH_SUCCESS_TOKEN_99') {
+        if (mainLoginOverlay) mainLoginOverlay.remove();
+        if (protectedContent) protectedContent.classList.remove('hidden');
+        fetchExistingPhotosFromGitHub();
     }
 
     async function handleLogin() {
@@ -90,8 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                mainLoginOverlay.classList.add('hidden');
+                sessionStorage.setItem('auth_token', data.token);
+                
+                if (mainLoginOverlay) mainLoginOverlay.remove();
+                if (protectedContent) protectedContent.classList.remove('hidden');
+                
+                fetchExistingPhotosFromGitHub();
             } else {
                 loginErrorMsg.textContent = "Passcode salah, coba lagi ya! 🥺";
                 loginErrorMsg.classList.remove('hidden');
@@ -106,10 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    submitPasscodeBtn.addEventListener('click', handleLogin);
-    passcodeInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleLogin();
-    });
+    if (submitPasscodeBtn) {
+        submitPasscodeBtn.addEventListener('click', handleLogin);
+    }
+    if (passcodeInput) {
+        passcodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    }
 
     // --- PENGATURAN TEMA (8 PILIHAN) ---
     const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6', 'theme-7', 'theme-8'];
@@ -133,30 +144,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- NAVIGASI ---
-    hamburgerBtn.addEventListener('click', () => sidebar.classList.add('active'));
-    closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
+    if (hamburgerBtn) hamburgerBtn.addEventListener('click', () => sidebar.classList.add('active'));
+    if (closeSidebar) closeSidebar.addEventListener('click', () => sidebar.classList.remove('active'));
 
-    menuGallery.addEventListener('click', (e) => {
-        e.preventDefault();
-        applyRandomTheme(); 
-        gallerySection.classList.remove('hidden');
-        gameSection.classList.add('hidden');
-        sidebar.classList.remove('active');
-        stopTimer();
-    });
+    if (menuGallery) {
+        menuGallery.addEventListener('click', (e) => {
+            e.preventDefault();
+            applyRandomTheme(); 
+            gallerySection.classList.remove('hidden');
+            gameSection.classList.add('hidden');
+            sidebar.classList.remove('active');
+            stopTimer();
+        });
+    }
 
-    menuGame.addEventListener('click', (e) => {
-        e.preventDefault();
-        themes.forEach(theme => document.body.classList.remove(theme));
-        document.body.classList.add('theme-3');
-        gallerySection.classList.add('hidden');
-        gameSection.classList.remove('hidden');
-        sidebar.classList.remove('active');
-        fetchLeaderboard();
-    });
+    if (menuGame) {
+        menuGame.addEventListener('click', (e) => {
+            e.preventDefault();
+            themes.forEach(theme => document.body.classList.remove(theme));
+            document.body.classList.add('theme-3');
+            gallerySection.classList.add('hidden');
+            gameSection.classList.remove('hidden');
+            sidebar.classList.remove('active');
+            fetchLeaderboard();
+        });
+    }
 
     // --- UPDATE OPSI LEVEL BERDASARKAN MODE GAME ---
     function updateLevelOptions(mode) {
+        if (!levelMenu) return;
         levelMenu.innerHTML = '';
         if (mode === 'find-photo') {
             levelMenu.innerHTML = `
@@ -166,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="dropdown-item" data-value="iloveyou">❤️ I Love You (Full Foto!)</div>
             `;
             selectedLevelValue = 'normal';
-            levelSelected.textContent = '🟡 Normal (10-15 Foto) ▾';
+            if (levelSelected) levelSelected.textContent = '🟡 Normal (10-15 Foto) ▾';
         } else if (mode === 'guess-photo') {
             levelMenu.innerHTML = `
                 <div class="dropdown-item" data-value="guess-easy">🟢 Easy (70% Terlihat)</div>
@@ -174,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="dropdown-item" data-value="guess-hard">🟠 Hard (35% Terlihat)</div>
             `;
             selectedLevelValue = 'guess-normal';
-            levelSelected.textContent = '🟡 Normal (50% Terlihat) ▾';
+            if (levelSelected) levelSelected.textContent = '🟡 Normal (50% Terlihat) ▾';
         }
         bindLevelItems();
     }
@@ -197,7 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (gameModeSelected && gameModeMenu) {
         gameModeSelected.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Hanya toggle menu game mode sendiri tanpa mengganggu levelMenu
             gameModeMenu.classList.toggle('show');
         });
 
@@ -207,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentGameMode = item.getAttribute('data-value');
                 gameModeSelected.textContent = item.textContent + ' ▾';
                 
-                gameModeMenu.classList.remove('show'); // Tutup hanya setelah opsi dipilih
+                gameModeMenu.classList.remove('show'); 
                 
                 updateLevelOptions(currentGameMode);
                 stopTimer();
@@ -222,12 +237,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (levelSelected && levelMenu) {
         levelSelected.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Hanya toggle menu level sendiri tanpa mengganggu gameModeMenu
             levelMenu.classList.toggle('show');
         });
     }
 
-    // Dropdown hanya akan menutup jika user mengklik area di luar dropdown / layar kosong
     window.addEventListener('click', () => {
         if (levelMenu) levelMenu.classList.remove('show');
         if (gameModeMenu) gameModeMenu.classList.remove('show');
@@ -246,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGallery() {
+        if (!galleryContainer) return;
         galleryContainer.innerHTML = photos.length === 0 ? '<div class="empty-state">Belum ada foto.</div>' : ''; 
         photos.forEach(url => {
             const card = document.createElement('div');
@@ -262,24 +276,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- LOGIKA UTAMA START GAME ---
-    loginBtn.addEventListener('click', () => {
-        const name = playerNameInput.value.trim();
-        if (!name) return alert("Isi nama dulu!");
-        currentPlayer = name;
-        currentPlayerDisplay.textContent = currentPlayer;
-        loginPanel.classList.add('hidden');
-        gameArena.classList.remove('hidden');
-    });
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            const name = playerNameInput.value.trim();
+            if (!name) return alert("Isi nama dulu!");
+            currentPlayer = name;
+            currentPlayerDisplay.textContent = currentPlayer;
+            loginPanel.classList.add('hidden');
+            gameArena.classList.remove('hidden');
+        });
+    }
 
-    startGameBtn.addEventListener('click', () => {
-        if (photos.length < 5) return alert("Upload minimal 5 foto dulu di galeri!");
+    if (startGameBtn) {
+        startGameBtn.addEventListener('click', () => {
+            if (photos.length < 5) return alert("Upload minimal 5 foto dulu di galeri!");
 
-        if (currentGameMode === 'find-photo') {
-            startFindPhotoGame();
-        } else if (currentGameMode === 'guess-photo') {
-            startGuessPhotoGame();
-        }
-    });
+            if (currentGameMode === 'find-photo') {
+                startFindPhotoGame();
+            } else if (currentGameMode === 'guess-photo') {
+                startGuessPhotoGame();
+            }
+        });
+    }
 
     // --- MODE 1: CARI FOTO DI LAYAR ---
     function startFindPhotoGame() {
@@ -439,6 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLeaderboard = []; 
 
     async function fetchLeaderboard() {
+        if (!leaderboardList) return;
         leaderboardList.innerHTML = '<li>Memuat...</li>';
         try {
             const antiCache = new Date().getTime();
@@ -458,6 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderLeaderboardList(scores) {
+        if (!leaderboardList) return;
         leaderboardList.innerHTML = '';
         if (scores.length === 0) {
             leaderboardList.innerHTML = '<li>Belum ada rekor.</li>';
@@ -507,15 +527,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    uploadBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        modal.classList.remove('hidden');
-        sidebar.classList.remove('active');
-    });
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.remove('hidden');
+            sidebar.classList.remove('active');
+        });
+    }
     
-    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-    
-    if(lightboxClose) lightboxClose.addEventListener('click', () => lightboxModal.classList.add('hidden'));
-
-    fetchExistingPhotosFromGitHub();
+    if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    if (lightboxClose) lightboxClose.addEventListener('click', () => lightboxModal.classList.add('hidden'));
 });
