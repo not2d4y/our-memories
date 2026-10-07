@@ -39,6 +39,23 @@
 
         <!-- Arena Game -->
         <div id="game-arena" class="hidden">
+            <!-- Dropdown Pilihan Game & Level -->
+            <div class="game-mode-selector">
+                <select id="game-mode-select">
+                    <option value="find-photo">🔍 Cari Foto di Layar</option>
+                    <option value="guess-photo" disabled>🧩 Tebak Foto (Segera Hadir)</option>
+                    <option value="puzzle-photo" disabled>🖼️ Puzzle Foto (Segera Hadir)</option>
+                    <option value="memory-game" disabled>🧠 Memory Match (Segera Hadir)</option>
+                </select>
+
+                <select id="level-select">
+                    <option value="easy">🟢 Easy (5-10 Foto)</option>
+                    <option value="normal" selected>🟡 Normal (10-15 Foto)</option>
+                    <option value="hard">🟠 Hard (15-20 Foto)</option>
+                    <option value="iloveyou">❤️ I Love You (Full Foto!)</option>
+                </select>
+            </div>
+
             <div class="game-header">
                 <!-- Box Foto Target (Simetris Kiri) -->
                 <div class="game-box target-clue">
