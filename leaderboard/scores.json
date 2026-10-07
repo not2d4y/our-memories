@@ -86,6 +86,12 @@
   },
   {
     "name": "d4y",
+    "time": 3.91,
+    "mode": "guess-photo",
+    "difficulty": "guess-hard"
+  },
+  {
+    "name": "d4y",
     "time": 4.55,
     "mode": "guess-photo",
     "difficulty": "guess-easy"
