@@ -7,99 +7,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-3">
-    <!-- Hamburger Button -->
-    <div class="hamburger-btn" id="hamburger-btn">☰</div>
 
-    <!-- Floating Bubble Ganti Tema Instan (Acak) -->
-    <button class="floating-theme-btn" id="floating-theme-btn" title="Ganti Tema Acak!">
-        🌸✨
-    </button>
-
-    <!-- Sidebar Navigation -->
-    <nav id="sidebar" class="sidebar">
-        <span class="close-sidebar" id="close-sidebar">&times;</span>
-        <ul>
-            <li><a href="#" id="menu-gallery">📸 Galeri</a></li>
-            <li><a href="#" id="upload-btn">⬆ Upload Foto</a></li>
-            <li><a href="#" id="menu-game">🎮 Main Game</a></li>
-        </ul>
-    </nav>
-
-    <!-- Container Utama Galeri -->
-    <main id="gallery-section" class="gallery">
-        <div id="gallery-container" class="gallery-inner">
-            <div class="empty-state">Belum ada foto kenangan. Silakan upload!</div>
-        </div>
-    </main>
-
-    <!-- Container Utama Game -->
-    <main id="game-section" class="hidden">
-        <!-- Panel Login -->
-        <div id="login-panel" class="game-panel">
-            <h2>Siapa yang main? 👀</h2>
-            <input type="text" id="player-name" placeholder="Nama kamu / ayang">
-            <button id="login-btn">Masuk</button>
-        </div>
-
-        <!-- Arena Game -->
-        <div id="game-arena" class="hidden">
-            <!-- Custom Dropdown Pilihan Game & Level -->
-            <div class="game-mode-selector">
-                <!-- Dropdown Mode Game -->
-                <div class="custom-dropdown" id="game-mode-dropdown">
-                    <div class="dropdown-selected" id="game-mode-selected">🔍 Cari Foto di Layar ▾</div>
-                    <div class="dropdown-menu" id="game-mode-menu">
-                        <div class="dropdown-item" data-value="find-photo">🔍 Cari Foto di Layar</div>
-                        <div class="dropdown-item" data-value="guess-photo">🧩 Tebak Foto (Potongan Misterius)</div>
-                        <div class="dropdown-item disabled" data-value="puzzle-photo">🖼️ Puzzle Foto (Segera)</div>
-                        <div class="dropdown-item disabled" data-value="memory-game">🧠 Memory Match (Segera)</div>
-                    </div>
-                </div>
-
-                <!-- Dropdown Level (Dinamis menyesuaikan game) -->
-                <div class="custom-dropdown" id="level-dropdown">
-                    <div class="dropdown-selected" id="level-selected">🟡 Normal (10-15 Foto) ▾</div>
-                    <div class="dropdown-menu" id="level-menu">
-                        <!-- Opsi akan di-generate otomatis oleh script JS sesuai mode game -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="game-header">
-                <!-- Box Foto Target (Simetris Kiri) -->
-                <div class="game-box target-clue">
-                    <p id="clue-title-text">Cari foto ini!</p>
-                    <button id="start-game-btn">Mulai / Acak</button>
-                    <!-- Container Gambar / Potongan Misterius -->
-                    <div id="target-photo-container">
-                        <img id="target-photo" src="" alt="Target">
-                        <canvas id="guess-canvas" class="hidden"></canvas>
-                    </div>
-                </div>
-
-                <!-- Info Pemain, Waktu, & Tombol Leaderboard (Simetris Kanan) -->
-                <div class="game-box game-info">
-                    <p class="score-text">Pemain: <span id="current-player">-</span> | Waktu: <span id="time-display">0.00</span> dtk</p>
-                    <button id="leaderboard-btn">🏆 Leaderboard</button>
-                </div>
-            </div>
-            
-            <!-- Tempat foto berserakan / Pilihan tebakan -->
-            <div id="scatter-area"></div>
-        </div>
-    </main>
-
-    <!-- Modal Leaderboard -->
-    <div id="leaderboard-modal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-leaderboard">&times;</span>
-            <h2>🏆 Leaderboard</h2>
-            <ul id="leaderboard-list">
-                <li>Memuat...</li>
-            </ul>
-        </div>
-    </div>
-    <!-- Halaman Login Utama Passcode -->
+    <!-- Halaman Login Utama Passcode (Paling Depan & Aman) -->
     <div id="main-login-overlay" class="main-login-container">
         <div class="main-login-box">
             <h2>🔒 Masukkan Passcode</h2>
@@ -111,22 +20,119 @@
             <p id="login-error-msg" class="error-text hidden">Passcode salah, coba lagi!</p>
         </div>
     </div>
-    <!-- Modal Upload -->
-    <div id="upload-modal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Upload Foto Kenangan</h2>
-            <input type="file" id="file-input" accept="image/*" multiple>
-            <button id="submit-upload">Simpan ke Galeri</button>
-            <p id="upload-status"></p>
-        </div>
-    </div>
 
-    <!-- Modal Lightbox -->
-    <div id="lightbox-modal" class="modal hidden">
-        <span class="lightbox-close">&times;</span>
-        <img class="lightbox-content" id="lightbox-img">
-    </div>
+    <!-- Konten Utama Website (Disembunyikan total sebelum login sukses) -->
+    <div id="protected-content" class="hidden">
+        <!-- Hamburger Button -->
+        <div class="hamburger-btn" id="hamburger-btn">☰</div>
+
+        <!-- Floating Bubble Ganti Tema Instan (Acak) -->
+        <button class="floating-theme-btn" id="floating-theme-btn" title="Ganti Tema Acak!">
+            🌸✨
+        </button>
+
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="sidebar">
+            <span class="close-sidebar" id="close-sidebar">&times;</span>
+            <ul>
+                <li><a href="#" id="menu-gallery">📸 Galeri</a></li>
+                <li><a href="#" id="upload-btn">⬆ Upload Foto</a></li>
+                <li><a href="#" id="menu-game">🎮 Main Game</a></li>
+            </ul>
+        </nav>
+
+        <!-- Container Utama Galeri -->
+        <main id="gallery-section" class="gallery">
+            <div id="gallery-container" class="gallery-inner">
+                <div class="empty-state">Belum ada foto kenangan. Silakan upload!</div>
+            </div>
+        </main>
+
+        <!-- Container Utama Game -->
+        <main id="game-section" class="hidden">
+            <!-- Panel Login -->
+            <div id="login-panel" class="game-panel">
+                <h2>Siapa yang main? 👀</h2>
+                <input type="text" id="player-name" placeholder="Nama kamu / ayang">
+                <button id="login-btn">Masuk</button>
+            </div>
+
+            <!-- Arena Game -->
+            <div id="game-arena" class="hidden">
+                <!-- Custom Dropdown Pilihan Game & Level -->
+                <div class="game-mode-selector">
+                    <!-- Dropdown Mode Game -->
+                    <div class="custom-dropdown" id="game-mode-dropdown">
+                        <div class="dropdown-selected" id="game-mode-selected">🔍 Cari Foto di Layar ▾</div>
+                        <div class="dropdown-menu" id="game-mode-menu">
+                            <div class="dropdown-item" data-value="find-photo">🔍 Cari Foto di Layar</div>
+                            <div class="dropdown-item" data-value="guess-photo">🧩 Tebak Foto (Potongan Misterius)</div>
+                            <div class="dropdown-item disabled" data-value="puzzle-photo">🖼️ Puzzle Foto (Segera)</div>
+                            <div class="dropdown-item disabled" data-value="memory-game">🧠 Memory Match (Segera)</div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Level (Dinamis menyesuaikan game) -->
+                    <div class="custom-dropdown" id="level-dropdown">
+                        <div class="dropdown-selected" id="level-selected">🟡 Normal (10-15 Foto) ▾</div>
+                        <div class="dropdown-menu" id="level-menu">
+                            <!-- Opsi akan di-generate otomatis oleh script JS sesuai mode game -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-header">
+                    <!-- Box Foto Target (Simetris Kiri) -->
+                    <div class="game-box target-clue">
+                        <p id="clue-title-text">Cari foto ini!</p>
+                        <button id="start-game-btn">Mulai / Acak</button>
+                        <!-- Container Gambar / Potongan Misterius -->
+                        <div id="target-photo-container">
+                            <img id="target-photo" src="" alt="Target">
+                            <canvas id="guess-canvas" class="hidden"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Info Pemain, Waktu, & Tombol Leaderboard (Simetris Kanan) -->
+                    <div class="game-box game-info">
+                        <p class="score-text">Pemain: <span id="current-player">-</span> | Waktu: <span id="time-display">0.00</span> dtk</p>
+                        <button id="leaderboard-btn">🏆 Leaderboard</button>
+                    </div>
+                </div>
+                
+                <!-- Tempat foto berserakan / Pilihan tebakan -->
+                <div id="scatter-area"></div>
+            </div>
+        </main>
+
+        <!-- Modal Leaderboard -->
+        <div id="leaderboard-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-leaderboard">&times;</span>
+                <h2>🏆 Leaderboard</h2>
+                <ul id="leaderboard-list">
+                    <li>Memuat...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Modal Upload -->
+        <div id="upload-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Upload Foto Kenangan</h2>
+                <input type="file" id="file-input" accept="image/*" multiple>
+                <button id="submit-upload">Simpan ke Galeri</button>
+                <p id="upload-status"></p>
+            </div>
+        </div>
+
+        <!-- Modal Lightbox -->
+        <div id="lightbox-modal" class="modal hidden">
+            <span class="lightbox-close">&times;</span>
+            <img class="lightbox-content" id="lightbox-img">
+        </div>
+    </div> <!-- Akhir dari #protected-content -->
 
     <script src="script.js"></script>
 </body>
