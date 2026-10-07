@@ -88,19 +88,19 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchLeaderboard();
     });
 
-    // --- CUSTOM DROPDOWN LOGIC ---
+    // --- CUSTOM DROPDOWN LOGIC DENGAN CLASS 'SHOW' ---
     if (levelSelected && levelMenu) {
         levelSelected.addEventListener('click', (e) => {
             e.stopPropagation();
-            levelMenu.classList.toggle('hidden');
-            if (gameModeMenu) gameModeMenu.classList.add('hidden');
+            levelMenu.classList.toggle('show');
+            if (gameModeMenu) gameModeMenu.classList.remove('show');
         });
 
         document.querySelectorAll('#level-menu .dropdown-item:not(.disabled)').forEach(item => {
             item.addEventListener('click', () => {
                 selectedLevelValue = item.getAttribute('data-value');
                 levelSelected.textContent = item.textContent + ' ▾';
-                levelMenu.classList.add('hidden');
+                levelMenu.classList.remove('show');
             });
         });
     }
@@ -108,22 +108,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (gameModeSelected && gameModeMenu) {
         gameModeSelected.addEventListener('click', (e) => {
             e.stopPropagation();
-            gameModeMenu.classList.toggle('hidden');
-            if (levelMenu) levelMenu.classList.add('hidden');
+            gameModeMenu.classList.toggle('show');
+            if (levelMenu) levelMenu.classList.remove('show');
         });
 
         document.querySelectorAll('#game-mode-menu .dropdown-item:not(.disabled)').forEach(item => {
             item.addEventListener('click', () => {
                 gameModeSelected.textContent = item.textContent + ' ▾';
-                gameModeMenu.classList.add('hidden');
+                gameModeMenu.classList.remove('show');
             });
         });
     }
 
     // Tutup dropdown jika klik di luar
     window.addEventListener('click', () => {
-        if (levelMenu) levelMenu.classList.add('hidden');
-        if (gameModeMenu) gameModeMenu.classList.add('hidden');
+        if (levelMenu) levelMenu.classList.remove('show');
+        if (gameModeMenu) gameModeMenu.classList.remove('show');
     });
 
     // --- AMBIL FOTO GITHUB ---
