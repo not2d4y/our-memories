@@ -47,7 +47,9 @@ body {
 .sidebar ul li a { color: white; text-decoration: none; font-size: 18px; font-weight: bold; display: block; }
 .sidebar ul li a:hover { color: #ffd1dc; }
 
-/* Custom Dropdown Style (Tanpa Popup Bawaan HP) */
+/* =========================================
+   CUSTOM DROPDOWN & ANIMASI SLIDE KE BAWAH
+   ========================================= */
 .game-mode-selector {
     display: flex;
     justify-content: space-between;
@@ -64,7 +66,8 @@ body {
     border: 2px solid #ffb6c1;
     border-radius: 12px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    cursor: user-select;
+    cursor: pointer;
+    user-select: none;
 }
 
 .dropdown-selected {
@@ -76,19 +79,6 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 110%;
-    left: 0;
-    width: 100%;
-    background: white;
-    border: 2px solid #ffb6c1;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    z-index: 100;
-    overflow: hidden;
 }
 
 .dropdown-item {
@@ -127,7 +117,7 @@ body {
     z-index: 100;
     overflow: hidden;
     
-    /* Efek Animasi Slide & Fade */
+    /* Efek Animasi Slide & Fade Awal */
     max-height: 0;
     opacity: 0;
     transform: translateY(-10px);
@@ -135,14 +125,13 @@ body {
     pointer-events: none;
 }
 
-/* Saat kelas 'hidden' dihapus, menu akan meluncur turun dengan mulus */
+/* Saat kelas 'hidden' dihapus dari JS, menu meluncur turun dengan mulus */
 .dropdown-menu:not(.hidden) {
-    max-height: 200px; /* Sesuaikan dengan tinggi isi menu */
+    max-height: 200px; 
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
-
 
 /* =========================================
    PENGATURAN TEMA GALERI
