@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Modal & Elemen Lain
     const uploadBtn = document.getElementById('upload-btn');
-    const refreshBtn = document.getElementById('refresh-btn');
     const modal = document.getElementById('upload-modal');
     const closeBtn = document.querySelector('.close-btn');
     const submitUpload = document.getElementById('submit-upload');
@@ -47,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Quick Theme Switcher Elements
     const themeBubbles = document.querySelectorAll('.theme-bubble[data-theme]');
-    const quickRandomThemeBtn = document.getElementById('quick-random-theme');
+    const randomThemeBtns = document.querySelectorAll('.t-random');
 
     let photos = []; 
     let currentPlayer = "";
@@ -69,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyRandomTheme();
 
-    // Quick Theme Switcher Event
+    // Quick Theme Switcher (Berlaku di Galeri & Game secara instan)
     themeBubbles.forEach(bubble => {
         bubble.addEventListener('click', () => {
             const targetTheme = bubble.getAttribute('data-theme');
@@ -78,11 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    if (quickRandomThemeBtn) {
-        quickRandomThemeBtn.addEventListener('click', () => {
+    randomThemeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
             applyRandomTheme();
         });
-    }
+    });
 
     // --- NAVIGASI ---
     hamburgerBtn.addEventListener('click', () => sidebar.classList.add('active'));
@@ -345,13 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    refreshBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        applyRandomTheme(); 
-        if(!gallerySection.classList.contains('hidden')) renderGallery();
-        sidebar.classList.remove('active');
-    });
 
     uploadBtn.addEventListener('click', (e) => {
         e.preventDefault();
