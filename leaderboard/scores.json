@@ -23,5 +23,11 @@
     "name": "d4y",
     "time": 1.55,
     "mode": "find-photo"
+  },
+  {
+    "name": "d4y",
+    "time": 1.65,
+    "mode": "find-photo",
+    "difficulty": "normal"
   }
 ]
