@@ -16,5 +16,11 @@
     "time": 1.65,
     "mode": "guess-photo",
     "difficulty": "guess-easy"
+  },
+  {
+    "name": "d4y",
+    "time": 2.65,
+    "mode": "guess-photo",
+    "difficulty": "guess-hard"
   }
 ]
