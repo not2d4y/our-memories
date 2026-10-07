@@ -152,7 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
         gameModeSelected.addEventListener('click', (e) => {
             e.stopPropagation();
             gameModeMenu.classList.toggle('show');
-            if (levelMenu) levelMenu.classList.add('show');
+            // FIX: Menggunakan remove agar dropdown level tertutup saat mode game dibuka
+            if (levelMenu) levelMenu.classList.remove('show'); 
         });
 
         document.querySelectorAll('#game-mode-menu .dropdown-item:not(.disabled)').forEach(item => {
@@ -315,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let percentage = 0.5; // Normal
             if (selectedLevelValue === 'guess-easy') percentage = 0.7;
-            else if (selectedLevelValue === 'guess-hard') percentage = 0.25;
+            else if (selectedLevelValue === 'guess-hard') percentage = 0.35;
 
             const cropWidth = imgObj.width * percentage;
             const cropHeight = imgObj.height * percentage;
