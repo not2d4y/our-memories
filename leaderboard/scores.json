@@ -50,6 +50,12 @@
   },
   {
     "name": "d4y",
+    "time": 2.5,
+    "mode": "find-photo",
+    "difficulty": "normal"
+  },
+  {
+    "name": "d4y",
     "time": 3,
     "mode": "guess-photo",
     "difficulty": "guess-normal"
