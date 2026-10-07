@@ -123,8 +123,8 @@ body {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Saat kelas 'hidden' dihapus dari JS, menu meluncur turun dengan mulus */
-.dropdown-menu:not(.hidden) {
+/* Saat class .show ditambahkan dari JS, menu meluncur turun dengan mulus */
+.dropdown-menu.show {
     visibility: visible;
     opacity: 1;
     transform: translateY(0);
@@ -426,4 +426,3 @@ body.theme-4 .photo-card {
 /* Sembunyikan gambar target kosong */
 #target-photo[src=""] { display: none; }
 #target-photo:not([src=""]) { display: inline-block; }
-
