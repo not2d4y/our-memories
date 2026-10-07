@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPlayerDisplay = document.getElementById('current-player');
     const startGameBtn = document.getElementById('start-game-btn');
     const targetPhoto = document.getElementById('target-photo');
+    const guessCanvas = document.getElementById('guess-canvas');
+    const clueTitleText = document.getElementById('clue-title-text');
     const scatterArea = document.getElementById('scatter-area');
     const timeDisplay = document.getElementById('time-display');
     const leaderboardList = document.getElementById('leaderboard-list');
@@ -50,10 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let photos = []; 
     let currentPlayer = "";
     let targetUrl = "";
+    let currentGameMode = 'find-photo'; // Default mode: Cari Foto
+    let selectedLevelValue = 'normal'; // Default level
     let timerInterval;
     let startTime;
     let gameActive = false;
-    let selectedLevelValue = 'normal'; // Default level
 
     // --- PENGATURAN TEMA (8 PILIHAN) ---
     const themes = ['theme-1', 'theme-2', 'theme-3', 'theme-4', 'theme-5', 'theme-6', 'theme-7', 'theme-8'];
@@ -63,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomTheme = themes[Math.floor(Math.random() * themes.length)];
         document.body.classList.add(randomTheme);
         
-        // Setiap tema berganti, acak ulang juga orientasi kemiringan foto di galeri
         if (!gallerySection.classList.contains('hidden')) {
             renderGallery();
         }
@@ -71,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyRandomTheme();
 
-    // Floating Bubble Click (Ganti tema random & acak ulang orientasi foto galeri)
     if (floatingThemeBtn) {
         floatingThemeBtn.addEventListener('click', () => {
             applyRandomTheme();
@@ -94,27 +95,55 @@ document.addEventListener('DOMContentLoaded', () => {
     menuGame.addEventListener('click', (e) => {
         e.preventDefault();
         themes.forEach(theme => document.body.classList.remove(theme));
-        document.body.classList.add('theme-3'); // Default Pink Sakura saat masuk game
+        document.body.classList.add('theme-3');
         gallerySection.classList.add('hidden');
         gameSection.classList.remove('hidden');
         sidebar.classList.remove('active');
         fetchLeaderboard();
     });
 
-    // --- CUSTOM DROPDOWN LOGIC DENGAN CLASS 'SHOW' ---
-    if (levelSelected && levelMenu) {
-        levelSelected.addEventListener('click', (e) => {
-            e.stopPropagation();
-            levelMenu.classList.toggle('show');
-            if (gameModeMenu) gameModeMenu.classList.remove('show');
-        });
+    // --- UPDATE OPSI LEVEL BERDASARKAN MODE GAME ---
+    function updateLevelOptions(mode) {
+        levelMenu.innerHTML = '';
+        if (mode === 'find-photo') {
+            levelMenu.innerHTML = `
+                <div class="dropdown-item" data-value="easy">🟢 Easy (5-10 Foto)</div>
+                <div class="dropdown-item" data-value="normal">🟡 Normal (10-15 Foto)</div>
+                <div class="dropdown-item" data-value="hard">🟠 Hard (15-20 Foto)</div>
+                <div class="dropdown-item" data-value="iloveyou">❤️ I Love You (Full Foto!)</div>
+            `;
+            selectedLevelValue = 'normal';
+            levelSelected.textContent = '🟡 Normal (10-15 Foto) ▾';
+        } else if (mode === 'guess-photo') {
+            levelMenu.innerHTML = `
+                <div class="dropdown-item" data-value="guess-easy">🟢 Easy (Potongan Besar)</div>
+                <div class="dropdown-item" data-value="guess-normal">🟡 Normal (Potongan Sedang)</div>
+                <div class="dropdown-item" data-value="guess-hard">🟠 Hard (Potongan Kecil)</div>
+            `;
+            selectedLevelValue = 'guess-normal';
+            levelSelected.textContent = '🟡 Normal (Potongan Sedang) ▾';
+        }
+        bindLevelItems();
+    }
 
+    function bindLevelItems() {
         document.querySelectorAll('#level-menu .dropdown-item:not(.disabled)').forEach(item => {
             item.addEventListener('click', () => {
                 selectedLevelValue = item.getAttribute('data-value');
                 levelSelected.textContent = item.textContent + ' ▾';
                 levelMenu.classList.remove('show');
             });
+        });
+    }
+
+    updateLevelOptions('find-photo');
+
+    // --- CUSTOM DROPDOWN LOGIC ---
+    if (levelSelected && levelMenu) {
+        levelSelected.addEventListener('click', (e) => {
+            e.stopPropagation();
+            levelMenu.classList.toggle('show');
+            if (gameModeMenu) gameModeMenu.classList.remove('show');
         });
     }
 
@@ -127,13 +156,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('#game-mode-menu .dropdown-item:not(.disabled)').forEach(item => {
             item.addEventListener('click', () => {
+                currentGameMode = item.getAttribute('data-value');
                 gameModeSelected.textContent = item.textContent + ' ▾';
                 gameModeMenu.classList.remove('show');
+                updateLevelOptions(currentGameMode);
+                stopTimer();
+                scatterArea.innerHTML = '';
+                targetPhoto.src = '';
+                guessCanvas.classList.add('hidden');
+                fetchLeaderboard(); // Muat leaderboard sesuai mode game yang dipilih
             });
         });
     }
 
-    // Tutup dropdown jika klik di luar
     window.addEventListener('click', () => {
         if (levelMenu) levelMenu.classList.remove('show');
         if (gameModeMenu) gameModeMenu.classList.remove('show');
@@ -156,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
         photos.forEach(url => {
             const card = document.createElement('div');
             card.className = 'photo-card';
-            // Rotasi miring acak kiri & kanan (-15 hingga 15 derajat)
             const randomRotation = Math.floor(Math.random() * 31) - 15;
             card.style.setProperty('--rot', randomRotation);
             
@@ -168,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LOGIKA GAME & LEVEL ---
+    // --- LOGIKA UTAMA START GAME ---
     loginBtn.addEventListener('click', () => {
         const name = playerNameInput.value.trim();
         if (!name) return alert("Isi nama dulu!");
@@ -180,7 +214,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startGameBtn.addEventListener('click', () => {
         if (photos.length < 5) return alert("Upload minimal 5 foto dulu di galeri!");
-        
+
+        if (currentGameMode === 'find-photo') {
+            startFindPhotoGame();
+        } else if (currentGameMode === 'guess-photo') {
+            startGuessPhotoGame();
+        }
+    });
+
+    // --- MODE 1: CARI FOTO DI LAYAR ---
+    function startFindPhotoGame() {
+        clueTitleText.textContent = "Cari foto ini!";
+        targetPhoto.classList.remove('hidden');
+        guessCanvas.classList.add('hidden');
+
         targetUrl = photos[Math.floor(Math.random() * photos.length)];
         targetPhoto.src = targetUrl;
         
@@ -188,16 +235,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const level = selectedLevelValue;
         let count = 10;
-        
-        if (level === 'easy') {
-            count = Math.floor(Math.random() * (10 - 5 + 1)) + 5; 
-        } else if (level === 'normal') {
-            count = Math.floor(Math.random() * (15 - 10 + 1)) + 10; 
-        } else if (level === 'hard') {
-            count = Math.floor(Math.random() * (20 - 15 + 1)) + 15; 
-        } else if (level === 'iloveyou') {
-            count = photos.length; 
-        }
+        if (level === 'easy') count = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+        else if (level === 'normal') count = Math.floor(Math.random() * (15 - 10 + 1)) + 10;
+        else if (level === 'hard') count = Math.floor(Math.random() * (20 - 15 + 1)) + 15;
+        else if (level === 'iloveyou') count = photos.length;
 
         let gamePhotos = [...photos].sort(() => 0.5 - Math.random()).slice(0, count);
         if(!gamePhotos.includes(targetUrl)) gamePhotos[0] = targetUrl;
@@ -217,9 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let finalX, finalY;
             let overlapping = true;
             let attempts = 0;
-            const maxAttempts = 50;
 
-            while (overlapping && attempts < maxAttempts) {
+            while (overlapping && attempts < 50) {
                 finalX = Math.floor(Math.random() * maxX);
                 finalY = Math.floor(Math.random() * maxY);
                 overlapping = false;
@@ -227,9 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let pos of placedPositions) {
                     const dx = finalX - pos.x;
                     const dy = finalY - pos.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < minDistance) {
+                    if (Math.sqrt(dx * dx + dy * dy) < minDistance) {
                         overlapping = true;
                         break;
                     }
@@ -255,19 +293,77 @@ document.addEventListener('DOMContentLoaded', () => {
             scatterArea.appendChild(img);
         });
 
+        initTimer();
+    }
+
+    // --- MODE 2: TEBAK FOTO (POTONGAN MISTERIUS) ---
+    function startGuessPhotoGame() {
+        clueTitleText.textContent = "Tebak potongan ini!";
+        targetPhoto.classList.add('hidden');
+        guessCanvas.classList.remove('hidden');
+
+        targetUrl = photos[Math.floor(Math.random() * photos.length)];
+        
+        const imgObj = new Image();
+        imgObj.crossOrigin = "anonymous";
+        imgObj.src = targetUrl;
+        imgObj.onload = () => {
+            const ctx = guessCanvas.getContext('2d');
+            guessCanvas.width = 75;
+            guessCanvas.height = 75;
+
+            let cropSize = 100; // Normal
+            if (selectedLevelValue === 'guess-easy') cropSize = 160;
+            else if (selectedLevelValue === 'guess-hard') cropSize = 55;
+
+            const maxSX = Math.max(0, imgObj.width - cropSize);
+            const maxSY = Math.max(0, imgObj.height - cropSize);
+            const sx = Math.floor(Math.random() * (maxSX + 1));
+            const sy = Math.floor(Math.random() * (maxSY + 1));
+
+            ctx.clearRect(0, 0, 75, 75);
+            ctx.drawImage(imgObj, sx, sy, cropSize, cropSize, 0, 0, 75, 75);
+        };
+
+        scatterArea.innerHTML = '';
+        
+        let options = [...photos].sort(() => 0.5 - Math.random()).slice(0, 6);
+        if (!options.includes(targetUrl)) options[0] = targetUrl;
+        options.sort(() => 0.5 - Math.random());
+
+        options.forEach(url => {
+            const optImg = document.createElement('img');
+            optImg.src = url;
+            optImg.className = 'guess-option-card';
+            optImg.addEventListener('click', () => {
+                if (!gameActive) return;
+                if (url === targetUrl) {
+                    winGame();
+                } else {
+                    optImg.style.opacity = '0.3';
+                    optImg.style.pointerEvents = 'none';
+                }
+            });
+            scatterArea.appendChild(optImg);
+        });
+
+        initTimer();
+    }
+
+    function initTimer() {
         gameActive = true;
         startTime = Date.now();
         clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             timeDisplay.textContent = ((Date.now() - startTime) / 1000).toFixed(2);
         }, 50);
-    });
+    }
 
     function winGame() {
         gameActive = false;
         clearInterval(timerInterval);
         const finalTime = parseFloat(timeDisplay.textContent);
-        alert(`Yeay Ketemu! Waktu: ${finalTime} detik.`);
+        alert(`Yeay Benar! Waktu: ${finalTime} detik.`);
         saveScoreToGitHub(currentPlayer, finalTime);
     }
 
@@ -277,14 +373,16 @@ document.addEventListener('DOMContentLoaded', () => {
         timeDisplay.textContent = "0.00";
     }
 
-    // --- LEADERBOARD GITHUB API ---
+    // --- LEADERBOARD Masing-masing Game (GitHub API) ---
     let currentLeaderboard = []; 
 
     async function fetchLeaderboard() {
         leaderboardList.innerHTML = '<li>Memuat...</li>';
         try {
             const antiCache = new Date().getTime();
-            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/leaderboard/scores.json?t=${antiCache}`);
+            // Pisahkan file skor berdasarkan mode game yang aktif
+            const scoreFile = currentGameMode === 'guess-photo' ? 'leaderboard/scores-guess.json' : 'leaderboard/scores.json';
+            const response = await fetch(`https://api.github.com/repos/not2d4y/our-memories/contents/${scoreFile}?t=${antiCache}`);
             if (response.ok) {
                 const data = await response.json();
                 currentLeaderboard = JSON.parse(atob(data.content)); 
@@ -312,7 +410,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderLeaderboardList(currentLeaderboard);
 
         try {
-            await fetch('/api/score', {
+            const apiEndpoint = currentGameMode === 'guess-photo' ? '/api/score-guess' : '/api/score';
+            await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, time })
