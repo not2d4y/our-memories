@@ -49,6 +49,12 @@
   },
   {
     "name": "kaes",
+    "time": 2.82,
+    "mode": "guess-photo",
+    "difficulty": "guess-hard"
+  },
+  {
+    "name": "kaes",
     "time": 4.63,
     "mode": "guess-photo",
     "difficulty": "guess-hard"
