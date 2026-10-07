@@ -39,22 +39,31 @@
 
         <!-- Arena Game -->
         <div id="game-arena" class="hidden">
-            <!-- Dropdown Pilihan Game & Level -->
+                        <!-- Custom Dropdown Pilihan Game & Level -->
             <div class="game-mode-selector">
-                <select id="game-mode-select">
-                    <option value="find-photo">🔍 Cari Foto di Layar</option>
-                    <option value="guess-photo" disabled>🧩 Tebak Foto (Segera Hadir)</option>
-                    <option value="puzzle-photo" disabled>🖼️ Puzzle Foto (Segera Hadir)</option>
-                    <option value="memory-game" disabled>🧠 Memory Match (Segera Hadir)</option>
-                </select>
+                <!-- Dropdown Mode Game -->
+                <div class="custom-dropdown" id="game-mode-dropdown">
+                    <div class="dropdown-selected" id="game-mode-selected">🔍 Cari Foto di Layar ▾</div>
+                    <div class="dropdown-menu hidden" id="game-mode-menu">
+                        <div class="dropdown-item" data-value="find-photo">🔍 Cari Foto di Layar</div>
+                        <div class="dropdown-item disabled" data-value="guess-photo">🧩 Tebak Foto (Segera)</div>
+                        <div class="dropdown-item disabled" data-value="puzzle-photo">🖼️ Puzzle Foto (Segera)</div>
+                        <div class="dropdown-item disabled" data-value="memory-game">🧠 Memory Match (Segera)</div>
+                    </div>
+                </div>
 
-                <select id="level-select">
-                    <option value="easy">🟢 Easy (5-10 Foto)</option>
-                    <option value="normal" selected>🟡 Normal (10-15 Foto)</option>
-                    <option value="hard">🟠 Hard (15-20 Foto)</option>
-                    <option value="iloveyou">❤️ I Love You (Full Foto!)</option>
-                </select>
+                <!-- Dropdown Level -->
+                <div class="custom-dropdown" id="level-dropdown">
+                    <div class="dropdown-selected" id="level-selected">🟡 Normal (10-15 Foto) ▾</div>
+                    <div class="dropdown-menu hidden" id="level-menu">
+                        <div class="dropdown-item" data-value="easy">🟢 Easy (5-10 Foto)</div>
+                        <div class="dropdown-item" data-value="normal">🟡 Normal (10-15 Foto)</div>
+                        <div class="dropdown-item" data-value="hard">🟠 Hard (15-20 Foto)</div>
+                        <div class="dropdown-item" data-value="iloveyou">❤️ I Love You (Full Foto!)</div>
+                    </div>
+                </div>
             </div>
+
 
             <div class="game-header">
                 <!-- Box Foto Target (Simetris Kiri) -->
