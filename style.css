@@ -47,28 +47,71 @@ body {
 .sidebar ul li a { color: white; text-decoration: none; font-size: 18px; font-weight: bold; display: block; }
 .sidebar ul li a:hover { color: #ffd1dc; }
 
-/* Styling Dropdown Game & Level agar Simetris */
+/* Custom Dropdown Style (Tanpa Popup Bawaan HP) */
 .game-mode-selector {
     display: flex;
     justify-content: space-between;
     width: 100%;
     gap: 10px;
     margin-bottom: 10px;
+    position: relative;
 }
 
-.game-mode-selector select {
-    width: 48%; /* Membagi rata persis seperti .game-box */
-    padding: 10px 8px;
+.custom-dropdown {
+    width: 48%;
+    position: relative;
     background: white;
     border: 2px solid #ffb6c1;
     border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    cursor: user-select;
+}
+
+.dropdown-selected {
+    padding: 10px 8px;
     color: #d81b60;
     font-weight: bold;
-    font-size: 12px;
-    outline: none;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    cursor: pointer;
+    font-size: 11px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 2px solid #ffb6c1;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    padding: 10px;
+    font-size: 11px;
+    color: #d81b60;
+    font-weight: bold;
+    text-align: left;
+    border-bottom: 1px solid #ffe4e1;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background: #fff0f5;
+}
+
+.dropdown-item.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.dropdown-item.disabled:hover {
+    background: white;
 }
 
 
