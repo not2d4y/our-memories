@@ -1,6 +1,12 @@
 [
   {
     "name": "d4y",
+    "time": 0.6,
+    "mode": "guess-photo",
+    "difficulty": "guess-hard"
+  },
+  {
+    "name": "d4y",
     "time": 1.05,
     "mode": "guess-photo",
     "difficulty": "guess-normal"
