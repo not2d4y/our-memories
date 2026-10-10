@@ -18,6 +18,12 @@
     "difficulty": "guess-hard"
   },
   {
+    "name": "d4y",
+    "time": 1.5,
+    "mode": "guess-photo",
+    "difficulty": "guess-hard"
+  },
+  {
     "name": "kaes",
     "time": 1.58,
     "mode": "guess-photo",
